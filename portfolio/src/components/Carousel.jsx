@@ -1,4 +1,4 @@
-import { useRef, useEffect, useState } from "react";
+import { useRef, useEffect, useState, useMemo } from "react";
 
 export default function Carousel({ videos, onSelectVideo, selectedVideo }) {
   const carouselRef = useRef(null);
@@ -18,8 +18,8 @@ export default function Carousel({ videos, onSelectVideo, selectedVideo }) {
   const lastTouchX = useRef(null);
   const touchVelocity = useRef(0);
 
-  const videoList = videos || [];
-  const loopedVideos = [...videoList, ...videoList, ...videoList];
+  // Mémoriser les vidéos pour éviter les recalculs inutiles
+  const loopedVideos = useMemo(() => [...videos, ...videos, ...videos], [videos]);
 
   // Calculer le centre du carousel
   useEffect(() => {
@@ -33,7 +33,7 @@ export default function Carousel({ videos, onSelectVideo, selectedVideo }) {
     return () => window.removeEventListener("resize", updateCenter);
   }, []);
 
-  // Mettre à jour scale, zIndex, translateY et rotateY
+  // Mettre à jour les styles (scale, zIndex, translateY, rotateY)
   useEffect(() => {
     const updateStyles = () => {
       if (!carouselRef.current) return;
@@ -83,7 +83,7 @@ export default function Carousel({ videos, onSelectVideo, selectedVideo }) {
     updateStyles();
   }, [centerX, loopedVideos]);
 
-  // Système de scroll ultra-fluide (souris + tactile)
+  // Système de scroll fluide (souris + tactile)
   useEffect(() => {
     const smoothScroll = () => {
       if (!carouselRef.current) {
@@ -146,6 +146,7 @@ export default function Carousel({ videos, onSelectVideo, selectedVideo }) {
     return () => cancelAnimationFrame(animationRef.current);
   }, []);
 
+  // Gestion des événements de la souris et du tactile
   const handleMouseMove = (e) => {
     if (!isTouching.current) {
       const rect = carouselRef.current.getBoundingClientRect();
@@ -192,6 +193,7 @@ export default function Carousel({ videos, onSelectVideo, selectedVideo }) {
     lastTouchX.current = null;
   };
 
+  // Centrer le carrousel au chargement
   useEffect(() => {
     if (carouselRef.current) {
       setTimeout(() => {
@@ -218,14 +220,14 @@ export default function Carousel({ videos, onSelectVideo, selectedVideo }) {
         }}
       >
         {loopedVideos.map((video, i) => (
-          <div key={`${video.id}-${Math.floor(i / videoList.length)}-${i}`} className="relative flex-shrink-0">
+          <div key={`${video.id}-${i}`} className="relative flex-shrink-0">
             <img
               ref={(el) => (itemRefs.current[i] = el)}
               src={video.thumbnail}
               alt={video.title}
               onClick={() => onSelectVideo(video)}
               className={`w-30 h-48 object-cover cursor-pointer shadow-2xl will-change-transform ${
-                selectedVideo?.id === video.id ? "border-1 border-blue-500" : ""
+                selectedVideo?.id === video.id ? "border-4 border-blue-500" : ""
               }`}
               style={{
                 transform: `
@@ -238,18 +240,15 @@ export default function Carousel({ videos, onSelectVideo, selectedVideo }) {
                 transformStyle: "preserve-3d",
               }}
             />
-            {/* Titre sous l'image centrale */}
             {centerVideoIndex === i && (
-              <div 
+              <div
                 className="absolute left-1/2 -translate-x-1/2 whitespace-nowrap mt-2 transition-opacity duration-300"
                 style={{
-                  top: '100%',
-                  zIndex: 1000
+                  top: "100%",
+                  zIndex: 1000,
                 }}
               >
-                <h3 className="text-lg font-bold text-blue-600">
-                  {video.title}
-                </h3>
+                <h3 className="text-lg font-bold text-blue-600">{video.title}</h3>
               </div>
             )}
           </div>
