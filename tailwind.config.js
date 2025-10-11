@@ -8,15 +8,16 @@ export default {
     extend: {
       colors: {
         // couleurs personnalisées
-        'roar-blue': '#1E40AF',
-        'roar-light': '#003DFF',
+        'roar-blue': '#3137FD',
+        //bg -->
+        'roar-light': 'F8F8F8',
+        
         'roar-dark': '#3137FD',
         'roar-accent': '#7C7C7C',
         'roar-bg': '#E0E0E0',
       },
       fontFamily: {
         'roboto': ['Roboto', 'sans-serif'],
-        'source-sans-3-light-300': ['Source sans 3', 'sans-serif'],
       },
     },
   },

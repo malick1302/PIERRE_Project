@@ -17,6 +17,8 @@ export default function Carousel({ videos, onSelectVideo, selectedVideo }) {
   const touchStartX = useRef(null);
   const lastTouchX = useRef(null);
   const touchVelocity = useRef(0);
+  const [isFrozen, setIsFrozen] = useState(false);
+  const freezeTimeoutRef = useRef(null);
 
   const videoList = videos || [];
   const loopedVideos = [...videoList, ...videoList, ...videoList];
@@ -34,54 +36,67 @@ export default function Carousel({ videos, onSelectVideo, selectedVideo }) {
   }, []);
 
   // Mettre à jour scale, zIndex, translateY et rotateY
+  const updateStyles = () => {
+    if (!carouselRef.current) return;
+    const newScales = [];
+    const newZ = [];
+    const newY = [];
+    const newRotates = [];
+    let closestIndex = null;
+    let minDistance = Infinity;
+
+    itemRefs.current.forEach((el, idx) => {
+      if (!el) {
+        newScales.push(1);
+        newZ.push(0);
+        newY.push(0);
+        newRotates.push(0);
+        return;
+      }
+      const rect = el.getBoundingClientRect();
+      const itemCenter = rect.left + rect.width / 2;
+      const distance = centerX - itemCenter;
+      const maxDistance = 600;
+
+      const scale = Math.max(0.6, 1 - (Math.abs(distance) / maxDistance) * 0.6);
+      newScales.push(scale);
+
+      newZ.push(Math.round(scale * 100));
+      newY.push(-(scale - 1) * 10);
+
+      const rotateY = Math.min(Math.abs(distance) / maxDistance, 1) * 5 * (distance < 0 ? 1 : -1);
+      newRotates.push(rotateY);
+
+      // Trouver l'image la plus proche du centre
+      if (Math.abs(distance) < minDistance) {
+        minDistance = Math.abs(distance);
+        closestIndex = idx;
+      }
+    });
+
+    setScales(newScales);
+    setZIndexes(newZ);
+    setOffsetYs(newY);
+    setRotates(newRotates);
+    setCenterVideoIndex(closestIndex);
+  };
+
   useEffect(() => {
-    const updateStyles = () => {
-      if (!carouselRef.current) return;
-      const newScales = [];
-      const newZ = [];
-      const newY = [];
-      const newRotates = [];
-      let closestIndex = null;
-      let minDistance = Infinity;
-
-      itemRefs.current.forEach((el, idx) => {
-        if (!el) {
-          newScales.push(1);
-          newZ.push(0);
-          newY.push(0);
-          newRotates.push(0);
-          return;
-        }
-        const rect = el.getBoundingClientRect();
-        const itemCenter = rect.left + rect.width / 2;
-        const distance = centerX - itemCenter;
-        const maxDistance = 600;
-
-        const scale = Math.max(0.6, 1 - (Math.abs(distance) / maxDistance) * 0.6);
-        newScales.push(scale);
-
-        newZ.push(Math.round(scale * 100));
-        newY.push(-(scale - 1) * 10);
-
-        const rotateY = Math.min(Math.abs(distance) / maxDistance, 1) * 5 * (distance < 0 ? 1 : -1);
-        newRotates.push(rotateY);
-
-        // Trouver l'image la plus proche du centre
-        if (Math.abs(distance) < minDistance) {
-          minDistance = Math.abs(distance);
-          closestIndex = idx;
-        }
-      });
-
-      setScales(newScales);
-      setZIndexes(newZ);
-      setOffsetYs(newY);
-      setRotates(newRotates);
-      setCenterVideoIndex(closestIndex);
-    };
-
     updateStyles();
   }, [centerX, loopedVideos]);
+
+  // Écouter le scroll pour mettre à jour en temps réel
+  useEffect(() => {
+    const carousel = carouselRef.current;
+    if (!carousel) return;
+
+    const handleScroll = () => {
+      updateStyles();
+    };
+
+    carousel.addEventListener('scroll', handleScroll);
+    return () => carousel.removeEventListener('scroll', handleScroll);
+  }, [centerX]);
 
   // Système de scroll ultra-fluide (souris + tactile)
   useEffect(() => {
@@ -93,26 +108,29 @@ export default function Carousel({ videos, onSelectVideo, selectedVideo }) {
 
       let targetSpeed = 0;
 
-      if (isHovering.current && mousePos.current !== null && !isTouching.current) {
-        const { width } = carouselRef.current.getBoundingClientRect();
-        const center = width / 2;
-        const distance = mousePos.current - center;
+      // Si le carrousel est figé, on ignore tout mouvement
+      if (!isFrozen) {
+        if (isHovering.current && mousePos.current !== null && !isTouching.current) {
+          const { width } = carouselRef.current.getBoundingClientRect();
+          const center = width / 2;
+          const distance = mousePos.current - center;
 
-        const deadZone = 10;
-        if (Math.abs(distance) > deadZone) {
-          const effectiveDistance = Math.abs(distance) - deadZone;
-          const maxDistance = center - deadZone;
-          const normalizedDistance = Math.min(effectiveDistance / maxDistance, 1);
+          const deadZone = 10;
+          if (Math.abs(distance) > deadZone) {
+            const effectiveDistance = Math.abs(distance) - deadZone;
+            const maxDistance = center - deadZone;
+            const normalizedDistance = Math.min(effectiveDistance / maxDistance, 1);
 
-          const minSpeed = 0.3;
-          const maxSpeed = 25.5;
+            const minSpeed = 0.3;
+            const maxSpeed = 25.5;
 
-          const speed = minSpeed + (maxSpeed - minSpeed) * Math.pow(normalizedDistance, 2);
-          targetSpeed = speed * Math.sign(distance);
+            const speed = minSpeed + (maxSpeed - minSpeed) * Math.pow(normalizedDistance, 2);
+            targetSpeed = speed * Math.sign(distance);
+          }
+        } else if (isTouching.current === false && Math.abs(touchVelocity.current) > 0.1) {
+          targetSpeed = touchVelocity.current;
+          touchVelocity.current *= 0.95;
         }
-      } else if (isTouching.current === false && Math.abs(touchVelocity.current) > 0.1) {
-        targetSpeed = touchVelocity.current;
-        touchVelocity.current *= 0.95;
       }
 
       const inertia = 0.08;
@@ -196,15 +214,21 @@ export default function Carousel({ videos, onSelectVideo, selectedVideo }) {
     if (carouselRef.current) {
       setTimeout(() => {
         carouselRef.current.scrollLeft = carouselRef.current.scrollWidth / 3;
+        updateStyles();
       }, 100);
     }
   }, []);
 
+  // Calculer le titre à afficher (récupérer la vraie vidéo avec modulo)
+  const displayedTitle = centerVideoIndex !== null && videoList.length > 0
+    ? loopedVideos[centerVideoIndex]?.title || ""
+    : "";
+
   return (
-    <div className="relative w-full">
+    <div className="relative w-full mt-28 md:mt-0">
       <div
         ref={carouselRef}
-        className="flex gap-2 overflow-x-auto scrollbar-hide py-12 px-8 pb-20"
+        className="flex gap-2 overflow-x-auto scrollbar-hide py-12 px-8 pb-1"
         onMouseMove={handleMouseMove}
         onMouseEnter={handleMouseEnter}
         onMouseLeave={handleMouseLeave}
@@ -224,13 +248,13 @@ export default function Carousel({ videos, onSelectVideo, selectedVideo }) {
               src={video.thumbnail}
               alt={video.title}
               onClick={() => onSelectVideo(video)}
-              className={`w-30 h-48 object-cover cursor-pointer shadow-2xl will-change-transform ${
+              className={`w-30 h-48 object-cover cursor-pointer  will-change-transform  mb:w-20 mb:h-36 ${
                 selectedVideo?.id === video.id ? "border-1 border-blue-500" : ""
               }`}
               style={{
                 transform: `
                   scale(${scales[i] || 1}) 
-                  translateY(${(1 - (scales[i] || 1)) * 100}px) /* Ajustement pour aligner le bas */
+                  translateY(${(1 - (scales[i] || 1)) * 100}px)
                   rotateY(${rotates[i] || 0}deg)
                   translateZ(${(scales[i] || 1) * 50 - 50}px)
                 `,
@@ -238,22 +262,18 @@ export default function Carousel({ videos, onSelectVideo, selectedVideo }) {
                 transformStyle: "preserve-3d",
               }}
             />
-            {/* Titre sous l'image centrale */}
-            {centerVideoIndex === i && (
-              <div 
-                className="absolute left-1/2 -translate-x-1/2 whitespace-nowrap mt-2 transition-opacity duration-300"
-                style={{
-                  top: '100%',
-                  zIndex: 1000
-                }}
-              >
-                <h3 className="text-lg font-bold text-blue-600">
-                  {video.title}
-                </h3>
-              </div>
-            )}
           </div>
         ))}
+      </div>
+
+      {/* Titre fixe centré en dessous du carrousel */}
+      <div className="w-full flex justify-center">
+        <h3 
+          key={displayedTitle}
+          className="source-sans-light text-lg font-bold transition-opacity duration-300"
+        >
+          {displayedTitle}
+        </h3>
       </div>
     </div>
   );
