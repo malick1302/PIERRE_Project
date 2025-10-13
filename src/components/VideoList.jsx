@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import ReactPlayer from "react-player";
 import Carousel from "./Carousel";
+import Navbar from "./Navbar";
 
 export default function VideoList() {
   const [videos, setVideos] = useState([]);
@@ -37,16 +38,11 @@ export default function VideoList() {
         </div>
       ) : (
         <>
-          {/* Header avec ROAR Sound et INFO */}
-          <div className="flex flex-col md:flex-row md:justify-between md:items-center mb-1 md:mb-2">
-            <div className="flex justify-end md:order-2  md:mb-0">
-              <h2 className="Playfair-d-sc  text-3xl md:text-4xl  ">INFO</h2>
-            </div>
-            <h1 className="ml-0 mb-5 Playfair-d-sc  text-4xl  md:mb-0 md:text-4xl md:order-1">ROAR Sound</h1>
-          </div>
+     
+     < Navbar />
 
           {/* Conteneur principal avec vidéo et description */}
-          <div className="ml-0 Playfair-d-sc  flex flex-col md:flex-row flex md:gap-6  md:ml-0 md:mb-0 md:space-x-6">
+          <div className="ml-0 source-sans-light  flex flex-col md:flex-row flex md:gap-6  md:ml-0 md:mb-0 md:space-x-6">
             {/* Vidéo */}
             <div className="w-full  md:w-4/6">
               {selectedVideo && (

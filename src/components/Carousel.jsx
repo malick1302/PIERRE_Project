@@ -267,7 +267,7 @@ export default function Carousel({ videos, onSelectVideo, selectedVideo }) {
       </div>
 
       {/* Titre fixe centré en dessous du carrousel */}
-      <div className="w-full flex justify-center">
+      <div className="w-full flex justify-center source-sans-light">
         <h3 
           key={displayedTitle}
           className=" text-lg transition-opacity duration-300"

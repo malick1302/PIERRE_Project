@@ -14,6 +14,13 @@
 body {
   color: #3137FD;
 }
+html, body, #root {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  width: 100%;
+}
+
 
 .Playfair-d-sc {
 
@@ -71,6 +78,15 @@ font-weight: 100;
   font-style: italic;
 }
 
+iframe {
+  width: 100%;
+  height: 100%;
+  object-fit: cover; /* ✅ comme background-size: cover */
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: -1; /* derrière ton contenu */
+}
 
 p{
   color: #3137FD;
