@@ -152,7 +152,7 @@ export default function Carousel({ videos, onSelectVideo, selectedVideo }) {
 
         if (scrollLeft <= sectionWidth * 0.05) {
           track.scrollLeft = sectionWidth;
-        } else if (scrollLeft >= sectionWidth * 2.95) {
+        } else if (scrollLeft >= sectionWidth * 2) {
           track.scrollLeft = sectionWidth;
         }
       }
@@ -225,10 +225,10 @@ export default function Carousel({ videos, onSelectVideo, selectedVideo }) {
     : "";
 
   return (
-    <div className="relative w-full mt-28 md:mt-0">
+    <div className="relative w-full mt-28 md:mt-4">
       <div
         ref={carouselRef}
-        className="flex gap-2 overflow-x-auto scrollbar-hide py-12 px-8 pb-1"
+        className="flex gap-2 overflow-x-auto scrollbar-hide py-12 px-8  md:py-2 pb-1"
         onMouseMove={handleMouseMove}
         onMouseEnter={handleMouseEnter}
         onMouseLeave={handleMouseLeave}
@@ -248,7 +248,7 @@ export default function Carousel({ videos, onSelectVideo, selectedVideo }) {
               src={video.thumbnail}
               alt={video.title}
               onClick={() => onSelectVideo(video)}
-              className={`w-30 h-48 object-cover cursor-pointer  will-change-transform  mb:w-20 mb:h-36 ${
+              className={`w-30 h-48 object-cover cursor-pointer  will-change-transform  md:w-20 md:h-36 ${
                 selectedVideo?.id === video.id ? "border-1 border-blue-500" : ""
               }`}
               style={{
@@ -270,7 +270,7 @@ export default function Carousel({ videos, onSelectVideo, selectedVideo }) {
       <div className="w-full flex justify-center">
         <h3 
           key={displayedTitle}
-          className="source-sans-light text-lg font-bold transition-opacity duration-300"
+          className=" text-lg transition-opacity duration-300"
         >
           {displayedTitle}
         </h3>

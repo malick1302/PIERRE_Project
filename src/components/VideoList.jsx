@@ -40,15 +40,15 @@ export default function VideoList() {
           {/* Header avec ROAR Sound et INFO */}
           <div className="flex flex-col md:flex-row md:justify-between md:items-center mb-1 md:mb-2">
             <div className="flex justify-end md:order-2  md:mb-0">
-              <h2 className="source-sans-light text-3xl md:text-4xl  ">INFO</h2>
+              <h2 className="Playfair-d-sc  text-3xl md:text-4xl  ">INFO</h2>
             </div>
-            <h1 className="ml-0 mb-5 source-sans-light text-4xl ml-7 md:mb-0 md:text-4xl md:order-1">ROAR Sound</h1>
+            <h1 className="ml-0 mb-5 Playfair-d-sc  text-4xl  md:mb-0 md:text-4xl md:order-1">ROAR Sound</h1>
           </div>
 
           {/* Conteneur principal avec vidéo et description */}
-          <div className="ml-0 source-sans-light flex flex-col md:flex-row flex md:gap-6  md:ml-7  md:space-x-6">
+          <div className="ml-0 Playfair-d-sc  flex flex-col md:flex-row flex md:gap-6  md:ml-0 md:mb-0 md:space-x-6">
             {/* Vidéo */}
-            <div className="w-full md:w-3/5">
+            <div className="w-full  md:w-4/6">
               {selectedVideo && (
                 <div className="overflow-hidden shadow-2xl roar-blue">
                   <ReactPlayer
@@ -65,7 +65,7 @@ export default function VideoList() {
 
             {/* Titre et description */}
             <div className="w-full md:w-1/3 flex flex-col justify-start">
-              <h3 className="text-2xl md:text-3xl mb-3 md:mb-4">
+              <h3 className="text-2xl md:text-3xl mb-3 md:mb-0">
                 {selectedVideo?.title}
               </h3>
               <p className="text-sm">
@@ -76,6 +76,7 @@ export default function VideoList() {
 
           {/* Carousel en bas */}
           <Carousel
+        
             videos={videos}
             onSelectVideo={setSelectedVideo}
             selectedVideo={selectedVideo}

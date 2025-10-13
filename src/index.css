@@ -1,5 +1,10 @@
 /* @import url('https://fonts.googleapis.com/css2?family=Baumans&family=Kode+Mono:wght@400..700&family=Orbitron:wght@400..900&family=Roboto:ital,wght@0,100..900;1,100..900&display=swap'); */
 @import url('https://fonts.googleapis.com/css2?family=Baumans&family=Kode+Mono:wght@400..700&family=Orbitron:wght@400..900&family=Roboto:ital,wght@0,100..900;1,100..900&family=Source+Sans+3:ital,wght@0,200..900;1,200..900&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=Baumans&family=Kode+Mono&family=Lexend+Deca:wght@100..900&family=Orbitron:wght@400..900&family=Roboto:ital,wght@0,100..900;1,100..900&family=Source+Sans+3:ital,wght@0,200..900;1,200..900&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Baumans&family=Kode+Mono&family=Lexend+Deca:wght@100..900&family=Orbitron:wght@400..900&family=Roboto:ital,wght@0,100..900;1,100..900&family=Source+Sans+3:ital,wght@0,200..900;1,200..900&family=Zalando+Sans:ital,wght@0,200..900;1,200..900&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Baumans&family=Cinzel:wght@400..900&family=Kode+Mono&family=Lexend+Deca:wght@100..900&family=Orbitron:wght@400..900&family=Roboto:ital,wght@0,100..900;1,100..900&family=Source+Sans+3:ital,wght@0,200..900;1,200..900&family=Zalando+Sans:ital,wght@0,200..900;1,200..900&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Baumans&family=Cinzel:wght@400..900&family=Kode+Mono&family=Lexend+Deca:wght@100..900&family=Orbitron:wght@400..900&family=Prata&family=Roboto:ital,wght@0,100..900;1,100..900&family=Source+Sans+3:ital,wght@0,200..900;1,200..900&family=Zalando+Sans:ital,wght@0,200..900;1,200..900&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Baumans&family=Cinzel:wght@400..900&family=Kode+Mono&family=Lexend+Deca:wght@100..900&family=Orbitron:wght@400..900&family=Playfair+Display+SC:ital,wght@0,400;0,700;0,900;1,400;1,700;1,900&family=Prata&family=Roboto:ital,wght@0,100..900;1,100..900&family=Source+Sans+3:ital,wght@0,200..900;1,200..900&family=Zalando+Sans:ital,wght@0,200..900;1,200..900&display=swap");
 
 @tailwind base;
 @tailwind components;
@@ -8,6 +13,51 @@
 
 body {
   color: #3137FD;
+}
+
+.Playfair-d-sc {
+
+  font-family: 'Playfair Display SC', sans-serif;
+  font-weight: 400;
+}
+
+.Prata {
+font-family: 'Prata', sans-serif;
+font-weight: 100;
+
+}
+
+.Cinzel-sm-600 {
+  font-family: 'Cinzel', sans-serif;
+  font-weight: 600;
+
+}
+
+.Cinzel-m-500 {
+  font-family: 'Cinzel', sans-serif;
+  font-weight: medium 500;
+
+}
+
+
+.Zalando-sans-l-300 {
+  font-family:'Zalando Sans', sans-serif;
+  font-weight: Light 300;
+}
+
+.Zalando-sans-r-400 {
+  font-family:'Zalando Sans', sans-serif;
+  font-weight: 400;
+}
+
+.Zalando-sans-m-500 {
+  font-family:'Zalando Sans', sans-serif;
+  font-weight: Medium 500;
+}
+
+.Lexend-deca {
+  font-family: 'Lexend Deca', sans-serif;
+  font-weight: 100;
 }
 
 .source-sans-light {
