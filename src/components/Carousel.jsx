@@ -9,6 +9,7 @@ export default function Carousel({ videos, onSelectVideo, selectedVideo }) {
   const [offsetYs, setOffsetYs] = useState([]);
   const [rotates, setRotates] = useState([]);
   const [centerVideoIndex, setCenterVideoIndex] = useState(null);
+
   const mousePos = useRef(null);
   const animationRef = useRef();
   const currentSpeed = useRef(0);
@@ -19,9 +20,31 @@ export default function Carousel({ videos, onSelectVideo, selectedVideo }) {
   const touchVelocity = useRef(0);
   const [isFrozen, setIsFrozen] = useState(false);
   const freezeTimeoutRef = useRef(null);
+  const isInitialized = useRef(false);
 
   const videoList = videos || [];
   const loopedVideos = [...videoList, ...videoList, ...videoList];
+
+  // Fonction pour calculer la largeur exacte d'une section (responsive)
+  const getSectionWidth = () => {
+    if (videoList.length === 0 || itemRefs.current.length === 0 || !itemRefs.current[0]) {
+      return 0;
+    }
+
+    let totalWidth = 0;
+    // On calcule la largeur totale seulement pour la première boucle (index 0 à videoList.length - 1)
+    for (let i = 0; i < videoList.length; i++) {
+      const item = itemRefs.current[i];
+      if (item) {
+        // Ajoute la largeur de l'élément + la marge/gap (gap-2 = 8px)
+        totalWidth += item.getBoundingClientRect().width + 8;
+      }
+    }
+    // Retire le dernier gap
+    if (totalWidth > 0) totalWidth -= 8; 
+    
+    return totalWidth;
+  };
 
   // Calculer le centre du carousel
   useEffect(() => {
@@ -115,14 +138,14 @@ export default function Carousel({ videos, onSelectVideo, selectedVideo }) {
           const center = width / 2;
           const distance = mousePos.current - center;
 
-          const deadZone = 10;
+          const deadZone = 30;
           if (Math.abs(distance) > deadZone) {
             const effectiveDistance = Math.abs(distance) - deadZone;
             const maxDistance = center - deadZone;
             const normalizedDistance = Math.min(effectiveDistance / maxDistance, 1);
 
             const minSpeed = 0.3;
-            const maxSpeed = 25.5;
+            const maxSpeed = 35.5;
 
             const speed = minSpeed + (maxSpeed - minSpeed) * Math.pow(normalizedDistance, 2);
             targetSpeed = speed * Math.sign(distance);
@@ -139,21 +162,36 @@ export default function Carousel({ videos, onSelectVideo, selectedVideo }) {
       if (Math.abs(currentSpeed.current) < 0.01) {
         currentSpeed.current = 0;
       }
-
+      
       const roundedSpeed = Math.round(currentSpeed.current * 100) / 100;
 
       if (Math.abs(roundedSpeed) > 0.01) {
         carouselRef.current.scrollLeft += roundedSpeed;
 
         const track = carouselRef.current;
-        const scrollLeft = Math.round(track.scrollLeft);
-        const scrollWidth = track.scrollWidth;
-        const sectionWidth = Math.round(scrollWidth / 3);
-
-        if (scrollLeft <= sectionWidth * 0.05) {
-          track.scrollLeft = sectionWidth;
-        } else if (scrollLeft >= sectionWidth * 2) {
-          track.scrollLeft = sectionWidth;
+        const scrollLeft = track.scrollLeft;
+        
+        // LOGIQUE INFINIE PRÉCISE
+        const sectionWidth = getSectionWidth();
+        
+        if (sectionWidth > 0) {
+            const centerSectionStart = sectionWidth;
+            const centerSectionEnd = sectionWidth * 2;
+            
+            // Si on défile au-delà de la fin de la section centrale (vers la droite)
+            if (scrollLeft >= centerSectionEnd) {
+                // Utilisation du micro-timeout (10ms) pour masquer le saut
+                setTimeout(() => {
+                    if (track) track.scrollLeft = centerSectionStart;
+                }, 10); 
+            } 
+            // Si on défile au-delà du début de la section centrale (vers la gauche)
+            else if (scrollLeft <= 0) {
+                 // Utilisation du micro-timeout (10ms) pour masquer le saut
+                setTimeout(() => {
+                    if (track) track.scrollLeft = centerSectionEnd;
+                }, 10); 
+            }
         }
       }
 
@@ -162,7 +200,7 @@ export default function Carousel({ videos, onSelectVideo, selectedVideo }) {
 
     animationRef.current = requestAnimationFrame(smoothScroll);
     return () => cancelAnimationFrame(animationRef.current);
-  }, []);
+  }, [getSectionWidth]);
 
   const handleMouseMove = (e) => {
     if (!isTouching.current) {
@@ -210,22 +248,34 @@ export default function Carousel({ videos, onSelectVideo, selectedVideo }) {
     lastTouchX.current = null;
   };
 
+  // Initialisation : scroll au début de la section centrale
   useEffect(() => {
-    if (carouselRef.current) {
-      setTimeout(() => {
-        carouselRef.current.scrollLeft = carouselRef.current.scrollWidth / 3;
-        updateStyles();
-      }, 100);
+    if (carouselRef.current && videoList.length > 0 && !isInitialized.current) {
+        const sectionWidth = getSectionWidth();
+        if (sectionWidth > 0) {
+            carouselRef.current.scrollLeft = sectionWidth;
+            updateStyles();
+            isInitialized.current = true;
+        } else {
+             setTimeout(() => {
+                const calculatedWidth = getSectionWidth();
+                if (calculatedWidth > 0 && carouselRef.current) {
+                     carouselRef.current.scrollLeft = calculatedWidth;
+                     updateStyles();
+                     isInitialized.current = true;
+                }
+            }, 500);
+        }
     }
-  }, []);
+  }, [videoList.length]);
 
   // Calculer le titre à afficher (récupérer la vraie vidéo avec modulo)
   const displayedTitle = centerVideoIndex !== null && videoList.length > 0
-    ? loopedVideos[centerVideoIndex]?.title || ""
+    ? loopedVideos[centerVideoIndex % videoList.length]?.title || ""
     : "";
 
   return (
-    <div className="relative w-full mt-28 md:mt-4">
+    <div className="relative w-full mt-28 md:mt-4 overflow-hidden"> {/* OVERFLOW-HIDDEN ICI */}
       <div
         ref={carouselRef}
         className="flex gap-2 overflow-x-auto scrollbar-hide py-12 px-8  md:py-2 pb-1"
@@ -239,6 +289,7 @@ export default function Carousel({ videos, onSelectVideo, selectedVideo }) {
           perspective: "1200px",
           scrollbarWidth: "none",
           msOverflowStyle: "none",
+          // On retire le will-change-transform sur l'élément principal
         }}
       >
         {loopedVideos.map((video, i) => (
@@ -248,7 +299,7 @@ export default function Carousel({ videos, onSelectVideo, selectedVideo }) {
               src={video.thumbnail}
               alt={video.title}
               onClick={() => onSelectVideo(video)}
-              className={`w-30 h-48 object-cover cursor-pointer  will-change-transform  md:w-20 md:h-36 ${
+              className={`w-30 h-48 object-cover cursor-pointer will-change-transform md:w-20 md:h-36 ${
                 selectedVideo?.id === video.id ? "border-1 border-blue-500" : ""
               }`}
               style={{
