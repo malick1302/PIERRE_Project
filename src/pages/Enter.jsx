@@ -1,7 +1,6 @@
 import React, { useRef, useEffect, useState } from "react";
 import Navbar from "../components/Navbar";
 import { gsap } from "gsap";
-import Video from "../assets/videos/Video.mp4"
 
 const Enter = () => {
   const overlayRef = useRef(null);
@@ -45,7 +44,7 @@ const Enter = () => {
 
       {/* Vidéo fullscreen */}
       <div className="absolute top-0 left-0 w-full h-full overflow-hidden">
-        {/* <iframe
+        <iframe
           ref={videoRef}
           src="https://player.vimeo.com/video/524933864?autoplay=1&loop=1&muted=1&background=1"
           className="absolute w-[450%] h-[130%] -translate-x-3/4 scale-125 top-0 left-0 md:w-[120%] md:h-[120%] md:-translate-x-1/2 md:-translate-y-1/2 md:scale-125"
@@ -54,8 +53,8 @@ const Enter = () => {
           allow="autoplay; fullscreen; picture-in-picture"
           allowFullScreen
           title="Vidéo d'accueil"
-        /> */}
-<div className="absolute top-0 left-0 w-full h-full overflow-hidden">
+        />
+{/* <div className="absolute top-0 left-0 w-full h-full overflow-hidden">
   <video
     ref={videoRef}
     autoPlay
@@ -67,7 +66,7 @@ const Enter = () => {
   >
     <source src={Video} type="video/mp4" />
   </video>
-</div>
+</div> */}
 
 
       </div>
