@@ -5,6 +5,8 @@ const About = () => {
     return (
        
         <div>
+
+            
  < Navbar />
         </div>
 
