@@ -275,7 +275,7 @@ export default function Carousel({ videos, onSelectVideo, selectedVideo }) {
     : "";
 
   return (
-    <div className="relative w-full mt-28 md:mt-4 overflow-hidden"> {/* OVERFLOW-HIDDEN ICI */}
+    <div className="relative w-full mt-7 md:mt-4 overflow-hidden"> {/* OVERFLOW-HIDDEN ICI */}
       <div
         ref={carouselRef}
         className="flex gap-2 overflow-x-auto scrollbar-hide py-12 px-8  md:py-2 pb-1"

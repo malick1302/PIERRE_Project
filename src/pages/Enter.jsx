@@ -1,6 +1,7 @@
 import React, { useRef, useEffect, useState } from "react";
 import Navbar from "../components/Navbar";
 import { gsap } from "gsap";
+import Video from "../assets/videos/Video.mp4"
 
 const Enter = () => {
   const overlayRef = useRef(null);
@@ -38,13 +39,13 @@ const Enter = () => {
   return (
     <div className="relative w-screen h-screen overflow-hidden">
       {/* Wrapper pour forcer le zoom */}
-      <div className="min-h-screen p-4 md:p-6">
-        <Navbar />
-      </div>
+      <div className="min-h-screen p-4 md:p-6 relative z-50">
+  <Navbar />
+</div>
 
       {/* Vidéo fullscreen */}
       <div className="absolute top-0 left-0 w-full h-full overflow-hidden">
-        <iframe
+        {/* <iframe
           ref={videoRef}
           src="https://player.vimeo.com/video/524933864?autoplay=1&loop=1&muted=1&background=1"
           className="absolute w-[450%] h-[130%] -translate-x-3/4 scale-125 top-0 left-0 md:w-[120%] md:h-[120%] md:-translate-x-1/2 md:-translate-y-1/2 md:scale-125"
@@ -53,7 +54,22 @@ const Enter = () => {
           allow="autoplay; fullscreen; picture-in-picture"
           allowFullScreen
           title="Vidéo d'accueil"
-        />
+        /> */}
+<div className="absolute top-0 left-0 w-full h-full overflow-hidden">
+  <video
+    ref={videoRef}
+    autoPlay
+    loop
+    muted
+    playsInline
+    className="absolute top-0 left-0 w-[450%] h-[130%] -translate-x-3/4 scale-125 md:w-[120%] md:h-[120%] md:-translate-x-1/2 md:-translate-y-1/2 md:scale-12 object-cover"
+    style={{ transform: "translate(-10%, -10%) scale(1.2)", opacity: 1 }}
+  >
+    <source src={Video} type="video/mp4" />
+  </video>
+</div>
+
+
       </div>
 
       {/* Overlay de chargement */}
@@ -77,17 +93,18 @@ const Enter = () => {
 
       {/* Bouton centré */}
       {!loading && (
-        <div
-          ref={buttonRef}
-          className="absolute inset-0 flex items-center justify-center"
-        >
-          <button
-            className="px-8 py-4 text-lg font-semibold text-white bg-black/30 hover:bg-black/80 transition-all duration-300"
-            onClick={() => window.location.href = "/Home"}
-          >
-            Entrer
-          </button>
-        </div>
+      <div
+      ref={buttonRef}
+      className="absolute inset-0 flex items-center justify-center z-50 pointer-events-auto"
+    >
+      <button
+        className="px-8 py-4 text-lg font-semibold text-white bg-black/30 hover:bg-black/80 transition-all duration-300"
+        onClick={() => window.location.href = "/Home"}
+      >
+        Entrer
+      </button>
+    </div>
+    
       )}
     </div>
   );
