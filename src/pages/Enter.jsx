@@ -94,7 +94,7 @@ const Enter = () => {
       {!loading && (
       <div
       ref={buttonRef}
-      className="absolute inset-0 flex items-center justify-center z-50 pointer-events-auto"
+      className="absolute inset-0 flex items-center justify-center z-[100] pointer-events-auto"
     >
       <button
         className="px-8 py-4 text-lg font-semibold text-white bg-black/30 hover:bg-black/80 transition-all duration-300"
