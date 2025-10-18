@@ -4,7 +4,7 @@ import VideoList from '../components/VideoList';
 
 const Home = () => {
     return (
-        <div>
+        <div className="h-screen overflow-hidden scrollbar-hide">
 
             < VideoList />
             

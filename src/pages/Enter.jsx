@@ -36,9 +36,9 @@ const Enter = () => {
   }, []);
 
   return (
-    <div className="relative w-screen h-screen overflow-hidden">
+    <div className="relative w-screen h-screen overflow-hidden scrollbar-hide">
       {/* Wrapper pour forcer le zoom */}
-      <div className="min-h-screen p-4 md:p-6 relative z-50">
+      <div className="min-h-screen p-4 md:p-6 relative z-[100]">
   <Navbar />
 </div>
 

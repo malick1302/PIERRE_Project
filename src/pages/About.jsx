@@ -4,7 +4,7 @@ import Navbar from "../components/Navbar";
 const About = () => {
     return (
        
-        <div>
+        <div className="h-screen overflow-hidden scrollbar-hide">
 
             
  < Navbar />

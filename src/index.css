@@ -11,6 +11,7 @@
 @tailwind utilities;
 
 
+
 body {
   color: #3137FD;
 }
@@ -21,7 +22,11 @@ html, body, #root {
   width: 100%;
 }
 
-
+html,
+body {
+  overflow: hidden;
+  height: 100%;
+}
 .Playfair-d-sc {
 
   font-family: 'Playfair Display SC', sans-serif;
