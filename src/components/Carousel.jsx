@@ -37,11 +37,11 @@ export default function Carousel({ videos, onSelectVideo, selectedVideo }) {
       const item = itemRefs.current[i];
       if (item) {
         // Ajoute la largeur de l'élément + la marge/gap (gap-2 = 8px)
-        totalWidth += item.getBoundingClientRect().width + 8;
+        totalWidth += item.getBoundingClientRect().width + 30;
       }
     }
     // Retire le dernier gap
-    if (totalWidth > 0) totalWidth -= 8; 
+    if (totalWidth > 0) totalWidth -= 85; 
     
     return totalWidth;
   };
