@@ -15,7 +15,7 @@ const About = () => {
                     <div className='w-full mt-8 md:w-3/5 md:mt-9'>
                         <img src={studio1} alt="Photo 1 du studio" />
                     </div>
-                    <div className='mt-12 w-full md:w-1/3 flex flex-col md: justify-start    text-2xl md:text-xl  md:mb-0   '>
+                    <div className='mt-12 w-full md:w-1/3 flex flex-col md: justify-start   md:text-xl  md:mb-0   '>
                         <h3>Roar is a Paris-based studio crafting custom music and sound design for brands, fashion
                             and film. Clients include Coverse, Chiefs, Grand Marnier x Future, AD Council etc.
                         </h3>
