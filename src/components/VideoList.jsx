@@ -42,7 +42,7 @@ export default function VideoList() {
      < Navbar />
 
           {/* Conteneur principal avec vidéo et description */}
-          <div className="ml-0 source-sans-light  flex flex-col md:flex-row flex md:mt-6 md:pl-20 md:gap-6  md:ml-0 md:mb-0 md:space-x-6">
+          <div className="ml-0 source-sans-light  flex flex-col md:flex-row flex md:mt-6 md:pl-20 md:gap-6 md:ml-0 md:mb-0 md:space-x-6">
             {/* Vidéo */}
             <div className="w-full border border-black md:w-4/6">
               {selectedVideo && (
@@ -72,7 +72,6 @@ export default function VideoList() {
 
           {/* Carousel en bas */}
           <Carousel
-        
             videos={videos}
             onSelectVideo={setSelectedVideo}
             selectedVideo={selectedVideo}

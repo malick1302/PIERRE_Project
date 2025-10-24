@@ -16,9 +16,9 @@ export default function Carousel({ videos, onSelectVideo, selectedVideo }) {
 
   const videoList = videos || [];
 
-  const CARD_WIDTH = 145;
-  const CARD_HEIGHT = 255;
-  const GAP = 10;
+  const CARD_WIDTH = 100;
+  const CARD_HEIGHT = 185;
+  const GAP = 60;
 
   // Initialisation des positions (une seule fois)
   useEffect(() => {
@@ -203,7 +203,7 @@ export default function Carousel({ videos, onSelectVideo, selectedVideo }) {
     <div className="w-full relative overflow-hidden">
       <div
         ref={containerRef}
-        className="relative h-64 bg-transparent cursor-pointer"
+        className="relative h-40 bg-transparent cursor-pointer md:mt-3 "
         onMouseMove={handleMouseMove}
         onMouseLeave={handleMouseLeave}
         onTouchStart={handleTouchStart}
@@ -226,7 +226,7 @@ export default function Carousel({ videos, onSelectVideo, selectedVideo }) {
               src={item.thumbnail}
               alt={item.title}
               onClick={() => handleClick(item)}
-              className="absolute bottom-0 transition-transform duration-100"
+              className="absolute transition-transform duration-100"
               style={{
                 width: `${CARD_WIDTH}px`,
                 height: `${CARD_HEIGHT}px`,
@@ -241,7 +241,7 @@ export default function Carousel({ videos, onSelectVideo, selectedVideo }) {
           );
         })}
       </div>
-      <div className="flex justify-center mt-2 text-base">
+      <div className="flex justify-center text-base  mt-9">
         <h3 className="transition-opacity duration-300">
           {centerVideo?.title || ""}
         </h3>
