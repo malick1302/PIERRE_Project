@@ -1,9 +1,22 @@
 @import url('https://fonts.googleapis.com/css2?family=Baumans&family=Kode+Mono:wght@400..700&family=Orbitron:wght@400..900&family=Roboto:ital,wght@0,100..900;1,100..900&family=Source+Sans+3:ital,wght@0,200..900;1,200..900&display=swap');
 
+
+@font-face {
+  font-family: 'Helvetica';
+  src: url('/public/font/helvetica-lt-narrow/helvn.ttf');
+}
+
+
+@font-face {
+  font-family: 'HelveticaNeue';
+  src: url('/public/font/HelveticaNeue/HelveticaNeueLTStd-Lt.otf');
+}
+
 html,
 body {
   overflow: hidden;
   height: 100%; 
+
 }
 
 .App {

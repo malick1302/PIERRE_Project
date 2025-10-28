@@ -241,7 +241,7 @@ export default function Carousel({ videos, onSelectVideo, selectedVideo }) {
           );
         })}
       </div>
-      <div className="flex justify-center text-base  mt-9">
+      <div className="flex justify-center text-base  mt-8 font-HelveticaNeue">
         <h3 className="transition-opacity duration-300">
           {centerVideo?.title || ""}
         </h3>

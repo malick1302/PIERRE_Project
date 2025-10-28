@@ -6,12 +6,12 @@ import studio1 from "../assets/images/studio1.jpg";
 const About = () => {
     return (
 
-        <div className="h-screen overflow-hidden scrollbar-hide">
+        <div className="h-screen overflow-hidden scrollbar-hide font-HelveticaNeue">
 
             <div className="min-h-screen p-4 md:p-6 ">
                 < Navbar />
 
-                <div className='ml-0 source-sans-light flex flex-col md:flex-row flex md:gap-6  md:ml-0 md:mb-0 md:space-x-6'>
+                <div className='ml-0 flex flex-col md:flex-row flex md:gap-6  md:ml-0 md:mb-0 md:space-x-6'>
                     <div className='w-full mt-8 md:w-3/5 md:mt-9'>
                         <img src={studio1} alt="Photo 1 du studio" />
                     </div>

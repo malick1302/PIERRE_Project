@@ -12,9 +12,7 @@ export default function VideoList() {
     const fetchVideos = async () => {
       try {
         const response = await fetch("/videos.json");
-        if (!response.ok) {
-          throw new Error("Failed to fetch videos. Please try again later.");
-        }
+        if (!response.ok) throw new Error("Failed to fetch videos.");
         const data = await response.json();
         setVideos(data);
         setSelectedVideo(data[0]);
@@ -26,10 +24,6 @@ export default function VideoList() {
     fetchVideos();
   }, []);
 
-  useEffect(() => {
-    console.log("Selected video updated:", selectedVideo);
-  }, [selectedVideo]);
-
   return (
     <div className="min-h-screen pl-4 pr-4 md:pr-4 md:pl-6">
       {error ? (
@@ -38,39 +32,40 @@ export default function VideoList() {
         </div>
       ) : (
         <>
-     
-     < Navbar />
+          <Navbar />
 
-          {/* Conteneur principal avec vidéo et description */}
-          <div className="ml-0 source-sans-light  flex flex-col md:flex-row flex md:mt-6 md:pl-20 md:gap-6 md:ml-0 md:mb-0 md:space-x-6">
-            {/* Vidéo */}
+          <div className="ml-0 source-sans-light flex flex-col md:flex-row md:mt-3 md:pl-20 md:gap-6 md:ml-0 md:mb-0 md:space-x-6">
+            {/* Player principal */}
             <div className="w-full border border-black md:w-4/6">
               {selectedVideo && (
                 <div className="overflow-hidden roar-blue">
-                  <ReactPlayer
-                    key={selectedVideo.id}
-                    url={selectedVideo.url}
-                    controls
-                    width="100%"
-                    height="100%"
-                    style={{ aspectRatio: '16/9' }}
-                  />
+ <ReactPlayer
+  url={selectedVideo.url}   // Laisse l'URL publique de Vimeo
+  controls
+  playing
+  muted
+  width="100%"
+  height="100%"
+  style={{ aspectRatio: '16/9' }}
+  config={{
+    vimeo: { playerOptions: { autoplay: true, muted: true } }
+  }}
+/>
+
+
+
                 </div>
               )}
             </div>
 
-            {/* Titre et description */}
-            <div className="w-full md:w-1/3 flex flex-col justify-start">
-              <h3 className="text-2xl md:text-3xl  md:mb-0">
-                {selectedVideo?.title}
-              </h3>
-              <p className="text-sm">
-                {selectedVideo?.description}
-              </p>
+            {/* Infos vidéo */}
+            <div className="w-full md:w-1/3 flex flex-col justify-start font-HelveticaNeuet">
+              <h3 className="text-2xl md:text-3xl md:mb-0">{selectedVideo?.title}</h3>
+              <p className="text-sm font-HelveticaNeue">{selectedVideo?.description}</p>
             </div>
           </div>
 
-          {/* Carousel en bas */}
+          {/* Carrousel */}
           <Carousel
             videos={videos}
             onSelectVideo={setSelectedVideo}

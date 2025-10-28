@@ -1,16 +1,20 @@
 import React, { useRef, useEffect, useState } from "react";
 import Navbar from "../components/Navbar";
 import { gsap } from "gsap";
+import Player from "@vimeo/player";
 
 const Enter = () => {
   const overlayRef = useRef(null);
   const loaderRef = useRef([]);
   const videoRef = useRef(null);
-  const buttonRef = useRef(null);
+  const enterButtonRef = useRef(null);
+  const soundButtonRef = useRef(null);
   const [loading, setLoading] = useState(true);
+  const [videoReady, setVideoReady] = useState(false);
+  const [isMuted, setIsMuted] = useState(true);
 
   useEffect(() => {
-    // Animation des petits cercles du loader
+    // Animation loader
     gsap.fromTo(
       loaderRef.current,
       { scale: 0, opacity: 0 },
@@ -24,29 +28,72 @@ const Enter = () => {
         ease: "power1.inOut",
       }
     );
-
-    // Fin du loader après 2 secondes
-    const timer = setTimeout(() => {
-      gsap.to(overlayRef.current, { opacity: 0, duration: 1, onComplete: () => setLoading(false) });
-      gsap.fromTo(videoRef.current, { opacity: 0 }, { opacity: 1, duration: 1 });
-      gsap.fromTo(buttonRef.current, { opacity: 0, y: 20 }, { opacity: 1, y: 0, duration: 1, delay: 0.5 });
-    }, 2000);
-
-    return () => clearTimeout(timer);
   }, []);
+
+  // Dès que la vidéo Vimeo est prête
+  const handleVideoLoad = () => {
+    setVideoReady(true);
+    fadeOutLoader();
+  };
+
+  // Disparition du loader + apparition des boutons
+  const fadeOutLoader = () => {
+    gsap.to(overlayRef.current, {
+      opacity: 0,
+      duration: 1,
+      onComplete: () => setLoading(false),
+    });
+
+    gsap.to(videoRef.current, { opacity: 1, duration: 1 });
+
+    // Apparition du bouton son et "Entrer"
+    gsap.fromTo(
+      soundButtonRef.current,
+      { opacity: 0, y: 10 },
+      { opacity: 1, y: 0, duration: 1, delay: 1 }
+    );
+    gsap.fromTo(
+      enterButtonRef.current,
+      { opacity: 0, y: 20 },
+      { opacity: 1, y: 0, duration: 1, delay: 1.3 }
+    );
+  };
+
+  // Toggle du son
+  const toggleMute = async () => {
+    const player = new Player(videoRef.current);
+    if (isMuted) {
+      await player.setMuted(false);
+      await player.setVolume(1);
+      setIsMuted(false);
+    } else {
+      await player.setMuted(true);
+      await player.setVolume(0);
+      setIsMuted(true);
+    }
+
+    // petite anim sur le bouton
+    gsap.fromTo(
+      soundButtonRef.current,
+      { scale: 1.2 },
+      { scale: 1, duration: 0.2, ease: "power1.out" }
+    );
+  };
 
   return (
     <div className="relative w-screen h-screen overflow-hidden scrollbar-hide">
-      {/* Wrapper pour forcer le zoom */}
+      {/* Navbar */}
       <div className="min-h-screen p-4 md:p-6 relative z-[100]">
-  <Navbar />
-</div>
+        <Navbar />
+      </div>
 
-      {/* Vidéo fullscreen */}
+      {/* Vidéo Vimeo */}
       <div className="absolute top-0 left-0 w-full h-full overflow-hidden">
         <iframe
           ref={videoRef}
-          src="https://player.vimeo.com/video/524933864?autoplay=1&loop=1&muted=1&background=1"
+          loading="lazy"
+          onLoad={handleVideoLoad}
+          src="https://player.vimeo.com/video/1128797324?autoplay=1&loop=1&muted=1&background=1&quality=360p"
           className="absolute w-[450%] h-[130%] -translate-x-3/4 scale-125 top-0 left-0 md:w-[120%] md:h-[120%] md:-translate-x-1/2 md:-translate-y-1/2 md:scale-125"
           style={{ transform: "translate(-10%, -10%) scale(1.2)", opacity: 0 }}
           frameBorder="0"
@@ -54,24 +101,9 @@ const Enter = () => {
           allowFullScreen
           title="Vidéo d'accueil"
         />
-{/* <div className="absolute top-0 left-0 w-full h-full overflow-hidden">
-  <video
-    ref={videoRef}
-    autoPlay
-    loop
-    muted
-    playsInline
-    className="absolute top-0 left-0 w-[450%] h-[130%] -translate-x-3/4 scale-125 md:w-[120%] md:h-[120%] md:-translate-x-1/2 md:-translate-y-1/2 md:scale-12 object-cover"
-    style={{ transform: "translate(-10%, -10%) scale(1.2)", opacity: 1 }}
-  >
-    <source src={Video} type="video/mp4" />
-  </video>
-</div> */}
-
-
       </div>
 
-      {/* Overlay de chargement */}
+      {/* Loader */}
       {loading && (
         <div
           ref={overlayRef}
@@ -86,24 +118,30 @@ const Enter = () => {
               />
             ))}
           </div>
-          <p className="text-white mt-4 text-lg tracking-wide"></p>
         </div>
       )}
 
-      {/* Bouton centré */}
+      {/* Contenu central */}
       {!loading && (
-      <div
-      ref={buttonRef}
-      className="absolute inset-0 flex items-center justify-center z-[100] pointer-events-auto"
-    >
-      <button
-        className="px-8 py-4 text-lg font-semibold text-white bg-black/30 hover:bg-black/80 transition-all duration-300"
-        onClick={() => window.location.href = "/Home"}
-      >
-        Entrer
-      </button>
-    </div>
-    
+        <div className="absolute inset-0 flex flex-col items-center justify-center z-[100] pointer-events-auto space-y-4">
+          {/* Bouton Son */}
+          <button
+            ref={soundButtonRef}
+            onClick={toggleMute}
+            className="px-8 py-2 text-lg text-white bg-black/30 hover:bg-black/80 transition-all duration-300"
+          >
+            {isMuted ? "SOUND OFF" : "SOUND ON"}
+          </button>
+
+          {/* Bouton Entrer */}
+          <button
+            ref={enterButtonRef}
+            className="px-8 py-4 text-lg font-semibold text-white bg-black/30 hover:bg-black/80 transition-all duration-300"
+            onClick={() => (window.location.href = "/Home")}
+          >
+            Entrer
+          </button>
+        </div>
       )}
     </div>
   );

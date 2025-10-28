@@ -18,6 +18,8 @@ export default {
       },
       fontFamily: {
         'roboto': ['Roboto', 'sans-serif'],
+        Helvetica: ['Helvetica', 'sans-serif'],
+        HelveticaNeue: ['HelveticaNeue', 'sans-serif'],
       },
     },
   },
