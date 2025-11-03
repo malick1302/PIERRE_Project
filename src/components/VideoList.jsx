@@ -34,25 +34,29 @@ export default function VideoList() {
         <>
           <Navbar />
 
-          <div className="ml-0 source-sans-light flex flex-col md:flex-row md:mt-3 md:pl-20 md:gap-6 md:ml-0 md:mb-0 md:space-x-6">
+          <div className="ml-0 source-sans-light flex flex-col md:flex-row md:mt-3 md:pl-0 md:gap-6 md:ml-0 md:mb-0 md:space-x-6 md:pb-8">
             {/* Player principal */}
-            <div className="w-full border border-black md:w-4/6">
+            <div className="w-full border border-black md:w-4/6 md:border-none">
               {selectedVideo && (
                 <div className="overflow-hidden roar-blue">
- <ReactPlayer
-  url={selectedVideo.url}   // Laisse l'URL publique de Vimeo
+              <ReactPlayer
+  url={selectedVideo.url}
   controls
   playing
   muted
   width="100%"
   height="100%"
-  style={{ aspectRatio: '16/9' }}
+  style={{ aspectRatio: "16/9" }}
   config={{
-    vimeo: { playerOptions: { autoplay: true, muted: true } }
+    vimeo: {
+      playerOptions: {
+        autoplay: true,
+        muted: true,
+        controls: true
+      }
+    }
   }}
 />
-
-
 
                 </div>
               )}
@@ -60,8 +64,12 @@ export default function VideoList() {
 
             {/* Infos vidéo */}
             <div className="w-full md:w-1/3 flex flex-col justify-start font-HelveticaNeuet">
-              <h3 className="text-2xl md:text-3xl md:mb-0">{selectedVideo?.title}</h3>
-              <p className="text-sm font-HelveticaNeue">{selectedVideo?.description}</p>
+              <h3 className="text-2xl md:text-3xl md:mb-0">
+                {selectedVideo?.title}
+              </h3>
+              <p className="text-sm font-HelveticaNeue">
+                {selectedVideo?.description}
+              </p>
             </div>
           </div>
 
