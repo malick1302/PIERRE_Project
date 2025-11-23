@@ -25,7 +25,7 @@ export default function VideoList() {
   }, []);
 
   return (
-    <div className="min-h-screen pl-4 pr-4 md:pr-4 md:pl-6">
+    <div className="min-h-screen pl-6 pr-6 md:pr-6 md:pl-9">
       {error ? (
         <div className="text-red-500 text-center">
           <p>{error}</p>
@@ -34,7 +34,7 @@ export default function VideoList() {
         <>
           <Navbar />
 
-          <div className="ml-0 source-sans-light flex flex-col md:flex-row md:mt-3 md:pl-0 md:gap-6 md:ml-0 md:mb-0 md:space-x-6 md:pb-8">
+          <div className="ml-0 source-sans-light flex flex-col md:flex-row md:mt-3 md:pl-0 md:gap-6 md:ml-0 md:mb-0 md:space-x-6 md:pb-4">
             {/* Player principal */}
             <div className="w-full border border-black md:w-4/6 md:border-none">
               {selectedVideo && (

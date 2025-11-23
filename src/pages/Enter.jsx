@@ -49,7 +49,7 @@ const Enter = () => {
     // Apparition du bouton son et "Entrer"
     gsap.fromTo(
       soundButtonRef.current,
-      { opacity: 0, y: 10 },
+      { opacity: 0, y: -10 },
       { opacity: 1, y: 0, duration: 1, delay: 1 }
     );
     gsap.fromTo(
@@ -123,25 +123,29 @@ const Enter = () => {
 
       {/* Contenu central */}
       {!loading && (
-        <div className="absolute inset-0 flex flex-col items-center justify-center z-[100] pointer-events-auto space-y-4">
-          {/* Bouton Son */}
-          <button
-            ref={soundButtonRef}
-            onClick={toggleMute}
-            className="px-8 py-2 text-lg text-white bg-black/30 hover:bg-black/80 transition-all duration-300"
-          >
-            {isMuted ? "SOUND OFF" : "SOUND ON"}
-          </button>
+        <>
+          <div className="absolute inset-0 flex flex-col items-center justify-center z-[100] pointer-events-auto">
+            {/* Bouton Entrer */}
+            <button
+              ref={enterButtonRef}
+              className="px-8 py-4 text-lg font-semibold text-white bg-black/30 hover:bg-black/80 transition-all duration-300"
+              onClick={() => (window.location.href = "/Home")}
+            >
+              Entrer
+            </button>
+          </div>
 
-          {/* Bouton Entrer */}
-          <button
-            ref={enterButtonRef}
-            className="px-8 py-4 text-lg font-semibold text-white bg-black/30 hover:bg-black/80 transition-all duration-300"
-            onClick={() => (window.location.href = "/Home")}
-          >
-            Entrer
-          </button>
-        </div>
+          {/* Bouton Son - Bas droite, aligné avec Info */}
+          <div className="absolute bottom-0 right-0 p-4 md:p-6 z-[100] pointer-events-auto">
+            <button
+              ref={soundButtonRef}
+              onClick={toggleMute}
+              className="text-lg text-white bg-black/30 hover:bg-black/80 transition-all duration-300 font-HelveticaNeue"
+            >
+              {isMuted ? "SOUND OFF" : "SOUND ON"}
+            </button>
+          </div>
+        </>
       )}
     </div>
   );
