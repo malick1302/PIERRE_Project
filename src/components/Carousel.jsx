@@ -56,14 +56,15 @@ export default function Carousel({ videos, onSelectVideo, selectedVideo }) {
       if (mobile) {
         // Sur mobile : dimensions exactes depuis Figma (390 × 826)
         // Image centrale : 86px × 154px, Position X: 152px, Y: 553px
-        // Images extérieures : 72px × 129px, Position Y: 576px
-        // Gap : 35px
+        // Images extérieures : 72px × 129px, Position X gauche: 46px, Position X droite: 273px, Y: 578px
+        // Gap : 34px
+        // Gap titre : 11px
         const figmaWidth = 390;
         const figmaCenterWidth = 86;
         const figmaCenterHeight = 154;
         const figmaSideWidth = 72;
         const figmaSideHeight = 129;
-        const figmaGap = 35;
+        const figmaGap = 34;
         const figmaCenterX = 152;
         const figmaSideX = 46; // Position X de l'image gauche
         const scaleRatio = containerWidth / figmaWidth;
@@ -84,10 +85,19 @@ export default function Carousel({ videos, onSelectVideo, selectedVideo }) {
           sideX: figmaSideX * scaleRatio
         });
       } else {
-        // Sur desktop : calcul original
+        // Sur desktop : dimensions Figma (1440 × 885)
+        // Image centrale (5ème) : 120px × 213px
+        // Images proches centre (4ème et 6ème) : 108px × 193px
+        // Autres images : 102px × 180px
+        // Gap : 54px
+        const figmaWidth = 1440;
+        const figmaGap = 54;
+        const scaleRatio = containerWidth / figmaWidth;
+        
         const gapRatio = 0.6;
         const cardWidth = containerWidth / (visibleItems + (visibleItems - 1) * gapRatio);
-        const gap = cardWidth * gapRatio;
+        const gap = figmaGap * scaleRatio;
+        
         setDimensions({ cardWidth, gap });
       }
     };
@@ -364,39 +374,37 @@ export default function Carousel({ videos, onSelectVideo, selectedVideo }) {
           let scale, itemWidth, itemHeight, itemX, bottomOffset;
 
           if (isMobile) {
-            // Sur mobile : dimensions exactes depuis Figma
-            const centerWidth = dimensions.cardWidth; // 86px
-            const sideWidth = dimensions.sideWidth; // 72px
-            const centerHeight = dimensions.centerHeight || 154; // 154px
-            const sideHeight = dimensions.sideHeight || 129; // 129px
-            const rect = containerRef.current?.getBoundingClientRect();
+            // Sur mobile : animation fluide progressive comme desktop
             const containerWidth = rect ? rect.width : window.innerWidth;
             const scaleRatio = containerWidth / 390;
-
-            // Déterminer quelle image c'est par rapport au centre
-            const figmaCenterX = 152 * scaleRatio;
+            
+            // Dimensions Figma mobile
+            const centerWidth = dimensions.cardWidth; // 86px
+            const centerHeight = dimensions.centerHeight || 154; // 154px
+            const sideWidth = dimensions.sideWidth; // 72px
+            const sideHeight = dimensions.sideHeight || 129; // 129px
+            
+            itemX = item.x;
             const itemCenter = item.x + centerWidth / 2;
-            const distance = Math.abs(itemCenter - figmaCenterX);
-            const isCenterImage = distance < (dimensions.gap / 2);
-
-            if (isCenterImage) {
-              // Image centrale : 86px × 154px, Y = 553px
-              scale = 1;
-              itemWidth = centerWidth;
-              itemHeight = centerHeight;
-              itemX = item.x;
-              bottomOffset = 0; // Position Y = 553px (sera géré par le conteneur)
-            } else {
-              // Images extérieures : 72px × 129px, Y = 576px
-              scale = 1; // Pas de scale, juste dimensions différentes
-              itemWidth = sideWidth;
-              itemHeight = sideHeight;
-              itemX = item.x;
-              // Position Y plus basse : 576 - 553 = 23px de différence
-              bottomOffset = 23 * scaleRatio;
-            }
+            const distance = Math.abs(itemCenter - center);
+            
+            // Calcul progressif du scale basé sur la distance du centre (comme desktop)
+            const maxDistance = (centerWidth + dimensions.gap) * 2; // Distance pour atteindre le scale minimum
+            const scaleProgress = 1 - (distance / maxDistance);
+            const clampedProgress = Math.max(0, Math.min(1, scaleProgress));
+            
+            // Interpolation entre dimensions centrales et latérales
+            itemWidth = sideWidth + (centerWidth - sideWidth) * clampedProgress;
+            itemHeight = sideHeight + (centerHeight - sideHeight) * clampedProgress;
+            
+            // Interpolation du bottomOffset (0px au centre, 25px sur les côtés)
+            bottomOffset = (25 * scaleRatio) * (1 - clampedProgress);
+            
+            // Scale légèrement réduit pour les images très éloignées (effet de profondeur)
+            scale = 0.7 + (0.3 * clampedProgress);
+            scale = Math.max(0.7, Math.min(1, scale));
           } else {
-            // Desktop : comportement original
+            // Desktop : comportement original avec scale progressif
             itemWidth = dimensions.cardWidth;
             itemHeight = CARD_HEIGHT;
             itemX = item.x;
@@ -436,7 +444,9 @@ export default function Carousel({ videos, onSelectVideo, selectedVideo }) {
                 className="text-center font-HelveticaNeue text-base whitespace-nowrap"
                 style={{
                   opacity: 1,
-                  marginTop: isMobile ? '8px' : '8px', // 8px entre image et titre
+                  marginTop: isMobile ? '11px' : '8px',
+                  marginLeft: isMobile ? '15px' : '0',
+                  marginRight: isMobile ? '15px' : '0'
                 }}
               >
                 {item.title || item.alt || ""}
