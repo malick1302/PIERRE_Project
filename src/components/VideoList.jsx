@@ -25,7 +25,7 @@ export default function VideoList() {
   }, []);
 
   return (
-    <div className="min-h-screen pl-6 pr-6 md:pr-6 md:pl-9">
+    <div className="min-h-screen px-[15px] md:px-[46px]">
       {error ? (
         <div className="text-red-500 text-center">
           <p>{error}</p>
@@ -34,36 +34,43 @@ export default function VideoList() {
         <>
           <Navbar />
 
-          <div className="ml-0 source-sans-light flex flex-col md:flex-row md:mt-3 md:pl-0 md:gap-6 md:ml-0 md:mb-0 md:space-x-6 md:pb-4">
-            {/* Player principal */}
-            <div className="w-full border border-black md:w-4/6 md:border-none">
-              {selectedVideo && (
-                <div className="overflow-hidden roar-blue">
-              <ReactPlayer
-  url={selectedVideo.url}
-  controls
-  playing
-  muted
-  width="100%"
-  height="100%"
-  style={{ aspectRatio: "16/9" }}
-  config={{
-    vimeo: {
-      playerOptions: {
-        autoplay: true,
-        muted: true,
-        controls: true
-      }
-    }
-  }}
-/>
+          {/* Espacement Navbar → Video : Mobile 41px, Desktop 68px */}
+          <div style={{ height: '41px' }} className="md:hidden" />
+          <div style={{ height: '68px' }} className="hidden md:block" />
 
+          <div className="source-sans-light flex flex-col md:flex-row md:gap-6">
+            {/* Player principal */}
+            <div className="w-full border border-black md:w-[792px] md:h-[445px] md:border-none">
+              {selectedVideo && (
+                <div className="overflow-hidden roar-blue w-full md:w-[792px]" 
+                     style={{
+                       height: 'auto',
+                       aspectRatio: '16/9'
+                     }}>
+                  <ReactPlayer
+                    url={selectedVideo.url}
+                    controls
+                    playing
+                    muted
+                    width="100%"
+                    height="100%"
+                    style={{ aspectRatio: "16/9" }}
+                    config={{
+                      vimeo: {
+                        playerOptions: {
+                          autoplay: true,
+                          muted: true,
+                          controls: true
+                        }
+                      }
+                    }}
+                  />
                 </div>
               )}
             </div>
 
             {/* Infos vidéo */}
-            <div className="w-full md:w-1/3 flex flex-col justify-start font-HelveticaNeuet">
+            <div className="w-full md:flex-1 flex flex-col justify-start font-HelveticaNeuet mt-4 md:mt-0">
               <h3 className="text-2xl md:text-3xl md:mb-0">
                 {selectedVideo?.title}
               </h3>
@@ -72,6 +79,10 @@ export default function VideoList() {
               </p>
             </div>
           </div>
+
+          {/* Espacement Video → Carousel : Mobile 180px (incluant titre/desc), Desktop 49px */}
+          <div style={{ height: '180px' }} className="md:hidden" />
+          <div style={{ height: '49px' }} className="hidden md:block" />
 
           {/* Carrousel */}
           <Carousel
