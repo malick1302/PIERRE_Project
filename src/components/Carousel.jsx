@@ -374,7 +374,7 @@ export default function Carousel({ videos, onSelectVideo, selectedVideo }) {
           let scale, itemWidth, itemHeight, itemX, bottomOffset;
 
           if (isMobile) {
-            // Sur mobile : animation fluide progressive comme desktop
+            // Sur mobile : animation fluide progressive - PAS DE SCALE, juste dimensions
             const containerWidth = rect ? rect.width : window.innerWidth;
             const scaleRatio = containerWidth / 390;
             
@@ -388,8 +388,8 @@ export default function Carousel({ videos, onSelectVideo, selectedVideo }) {
             const itemCenter = item.x + centerWidth / 2;
             const distance = Math.abs(itemCenter - center);
             
-            // Calcul progressif du scale basé sur la distance du centre (comme desktop)
-            const maxDistance = (centerWidth + dimensions.gap) * 2; // Distance pour atteindre le scale minimum
+            // Calcul progressif basé sur la distance du centre
+            const maxDistance = (centerWidth + dimensions.gap) * 2;
             const scaleProgress = 1 - (distance / maxDistance);
             const clampedProgress = Math.max(0, Math.min(1, scaleProgress));
             
@@ -397,12 +397,11 @@ export default function Carousel({ videos, onSelectVideo, selectedVideo }) {
             itemWidth = sideWidth + (centerWidth - sideWidth) * clampedProgress;
             itemHeight = sideHeight + (centerHeight - sideHeight) * clampedProgress;
             
-            // Interpolation du bottomOffset (0px au centre, 25px sur les côtés)
-            bottomOffset = (25 * scaleRatio) * (1 - clampedProgress);
+            // Pas de bottomOffset, toutes alignées
+            bottomOffset = 0;
             
-            // Scale légèrement réduit pour les images très éloignées (effet de profondeur)
-            scale = 0.7 + (0.3 * clampedProgress);
-            scale = Math.max(0.7, Math.min(1, scale));
+            // PAS DE SCALE sur mobile - tout reste à 1
+            scale = 1;
           } else {
             // Desktop : comportement original avec scale progressif
             itemWidth = dimensions.cardWidth;
@@ -423,7 +422,7 @@ export default function Carousel({ videos, onSelectVideo, selectedVideo }) {
               style={{
                 left: `${itemX}px`,
                 width: `${itemWidth}px`,
-                bottom: isMobile ? `${bottomOffset}px` : '0px',
+                bottom: '0px',
                 transform: `scale(${scale})`,
                 transformOrigin: "bottom center",
                 zIndex: Math.round(scale * 100),
