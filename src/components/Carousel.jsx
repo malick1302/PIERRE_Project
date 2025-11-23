@@ -21,7 +21,7 @@ export default function Carousel({ videos, onSelectVideo, selectedVideo }) {
   const VISIBLE_ITEMS_MOBILE = 3;
 
   // Dimensions dynamiques calculées pour remplir la largeur
-  const [dimensions, setDimensions] = useState({ cardWidth: 100, gap: 60 });
+  const [dimensions, setDimensions] = useState({ cardWidth: 100, gap: 60, sideWidth: 70 });
   const [isMobile, setIsMobile] = useState(false);
 
   // Calcul des dimensions pour que les images remplissent exactement la largeur
@@ -46,20 +46,30 @@ export default function Carousel({ videos, onSelectVideo, selectedVideo }) {
       const visibleItems = mobile ? VISIBLE_ITEMS_MOBILE : VISIBLE_ITEMS_DESKTOP;
 
       if (mobile) {
-        // Sur mobile : dimensions basées sur Figma (iPhone 12: 390px)
-        // Image centrale: w = 86px, y = 553
-        // Images extérieures: x = 273, y = 578
-        // Ratio pour adapter à différentes largeurs d'écran
+        // Sur mobile : 3 images entièrement visibles et centrées
+        // Basé sur Figma: image centrale 86px, gap ~35px
+        // Calculer pour que les 3 images soient centrées et visibles
         const figmaWidth = 390;
         const figmaCenterWidth = 86;
-        const scaleRatio = containerWidth / figmaWidth;
-        const cardWidth = figmaCenterWidth * scaleRatio;
-        // Calculer le gap pour centrer les 3 images
-        // Sur Figma: image centrale à ~152px (centrée), extérieure à 273px
-        // Gap approximatif: (273 - 152 - 86) = 35px sur Figma
         const figmaGap = 35;
+        const scaleRatio = containerWidth / figmaWidth;
+
+        const centerWidth = figmaCenterWidth * scaleRatio;
         const gap = figmaGap * scaleRatio;
-        setDimensions({ cardWidth, gap });
+        const sideWidth = centerWidth * 0.7; // Images extérieures 70% de la centrale
+
+        // Largeur totale des 3 images avec gaps
+        const totalWidth = sideWidth + gap + centerWidth + gap + sideWidth;
+
+        // Si la largeur totale dépasse, ajuster proportionnellement
+        if (totalWidth > containerWidth * 0.95) {
+          const adjustRatio = (containerWidth * 0.95) / totalWidth;
+          const adjustedCenterWidth = centerWidth * adjustRatio;
+          const adjustedGap = gap * adjustRatio;
+          setDimensions({ cardWidth: adjustedCenterWidth, gap: adjustedGap, sideWidth: adjustedCenterWidth * 0.7 });
+        } else {
+          setDimensions({ cardWidth: centerWidth, gap: gap, sideWidth: sideWidth });
+        }
       } else {
         // Sur desktop : calcul original
         const gapRatio = 0.6;
@@ -83,17 +93,55 @@ export default function Carousel({ videos, onSelectVideo, selectedVideo }) {
   useEffect(() => {
     if (!videoList.length || dimensions.cardWidth === 0) return;
 
-    const visibleItems = isMobile ? VISIBLE_ITEMS_MOBILE : VISIBLE_ITEMS_DESKTOP;
-    const totalVisibleWidth = visibleItems * dimensions.cardWidth + (visibleItems - 1) * dimensions.gap;
-    const rect = containerRef.current?.getBoundingClientRect();
-    const containerWidth = rect ? rect.width : window.innerWidth;
-    const startX = (containerWidth - totalVisibleWidth) / 2;
+    if (isMobile) {
+      // Sur mobile : centrer les 3 images visibles
+      const rect = containerRef.current?.getBoundingClientRect();
+      const containerWidth = rect ? rect.width : window.innerWidth;
 
-    const initialPositions = videoList.map((v, i) => ({
-      ...v,
-      x: startX + i * (dimensions.cardWidth + dimensions.gap),
-    }));
-    setItems(initialPositions);
+      const centerWidth = dimensions.cardWidth;
+      const sideWidth = dimensions.sideWidth || centerWidth * 0.7;
+      const gap = dimensions.gap;
+
+      // Calculer la position pour centrer les 3 images
+      // Image centrale au centre de l'écran
+      const centerX = containerWidth / 2;
+      const centerIndex = Math.floor(videoList.length / 2);
+
+      const initialPositions = videoList.map((v, i) => {
+        const offset = i - centerIndex;
+        let x;
+
+        if (offset === -1) {
+          // Image gauche
+          x = centerX - centerWidth / 2 - gap - sideWidth;
+        } else if (offset === 0) {
+          // Image centrale
+          x = centerX - centerWidth / 2;
+        } else if (offset === 1) {
+          // Image droite
+          x = centerX + centerWidth / 2 + gap;
+        } else {
+          // Autres images (hors vue)
+          x = centerX - centerWidth / 2 + offset * (centerWidth + gap);
+        }
+
+        return { ...v, x };
+      });
+      setItems(initialPositions);
+    } else {
+      // Desktop : comportement original
+      const visibleItems = VISIBLE_ITEMS_DESKTOP;
+      const totalVisibleWidth = visibleItems * dimensions.cardWidth + (visibleItems - 1) * dimensions.gap;
+      const rect = containerRef.current?.getBoundingClientRect();
+      const containerWidth = rect ? rect.width : window.innerWidth;
+      const startX = (containerWidth - totalVisibleWidth) / 2;
+
+      const initialPositions = videoList.map((v, i) => ({
+        ...v,
+        x: startX + i * (dimensions.cardWidth + dimensions.gap),
+      }));
+      setItems(initialPositions);
+    }
   }, [videos, dimensions, isMobile]);
 
   // --- NOUVELLE BOUCLE PRINCIPALE (Gère défilement + centrage + pause) ---
@@ -271,7 +319,11 @@ export default function Carousel({ videos, onSelectVideo, selectedVideo }) {
       <div
         ref={containerRef}
         className="relative bg-transparent cursor-pointer md:mt-3"
-        style={{ height: `${CARD_HEIGHT + 50}px` }}
+        style={{
+          height: isMobile
+            ? `${(dimensions.cardWidth * 2.8) + 60}px`
+            : `${CARD_HEIGHT + 50}px`
+        }}
         onMouseMove={handleMouseMove}
         onMouseLeave={handleMouseLeave}
         onTouchStart={handleTouchStart}
@@ -281,32 +333,47 @@ export default function Carousel({ videos, onSelectVideo, selectedVideo }) {
         {items.map((item, i) => {
           const rect = containerRef.current?.getBoundingClientRect();
           const center = rect ? rect.width / 2 : 0;
-          const itemCenter = item.x + dimensions.cardWidth / 2;
-          const distance = Math.abs(itemCenter - center);
 
-          let scale;
-          let bottomOffset = 0;
+          let scale, itemWidth, itemHeight, itemX;
+
           if (isMobile) {
-            // Sur mobile : image centrale plus grande (86px), extérieures plus petites
-            // Sur Figma: centrale y=553, extérieures y=578 (différence de 25px)
-            const maxDistance = (dimensions.cardWidth + dimensions.gap) * 1.2;
-            scale = 1 - (distance / maxDistance) * 0.35;
-            scale = Math.max(0.7, Math.min(1, scale)); // Image centrale à 1, extérieures à ~0.7
+            // Sur mobile : 3 images, centrale plus grande
+            const centerWidth = dimensions.cardWidth;
+            const sideWidth = dimensions.sideWidth || centerWidth * 0.7;
+            const gap = dimensions.gap;
 
-            // Ajuster la position verticale : extérieures plus basses
-            // Sur Figma: différence de 25px entre centrale (y=553) et extérieures (y=578)
-            const figmaWidth = 390;
-            const rect = containerRef.current?.getBoundingClientRect();
-            const containerWidth = rect ? rect.width : window.innerWidth;
-            const scaleRatio = containerWidth / figmaWidth;
-            const verticalOffset = 25 * scaleRatio; // 25px sur Figma
+            // Déterminer quelle image c'est par rapport au centre
+            const itemCenter = item.x + centerWidth / 2;
+            const distance = Math.abs(itemCenter - center);
+            const isCenterImage = distance < gap;
 
-            if (scale < 0.9) {
-              // Images extérieures : plus basses
-              bottomOffset = verticalOffset;
+            if (isCenterImage) {
+              // Image centrale
+              scale = 1;
+              itemWidth = centerWidth;
+              itemX = item.x;
+              itemHeight = centerWidth * 2.8;
+            } else {
+              // Images extérieures
+              scale = 0.7;
+              itemWidth = sideWidth;
+              itemHeight = sideWidth * 2.8;
+              // Ajuster la position X pour que l'image réduite soit bien positionnée
+              if (item.x < center) {
+                // Image gauche
+                itemX = item.x;
+              } else {
+                // Image droite
+                itemX = item.x + (centerWidth - sideWidth);
+              }
             }
           } else {
-            // Sur desktop : comportement original
+            // Desktop : comportement original
+            itemWidth = dimensions.cardWidth;
+            itemHeight = CARD_HEIGHT;
+            itemX = item.x;
+            const itemCenter = item.x + dimensions.cardWidth / 2;
+            const distance = Math.abs(itemCenter - center);
             const maxDistance = (dimensions.cardWidth + dimensions.gap) * 4;
             scale = 1 - (distance / maxDistance) * 0.3;
             scale = Math.max(0.7, Math.min(1, scale));
@@ -317,9 +384,9 @@ export default function Carousel({ videos, onSelectVideo, selectedVideo }) {
               key={item.id + "-" + i}
               className="absolute transition-transform duration-100"
               style={{
-                left: `${item.x}px`,
-                width: `${dimensions.cardWidth}px`,
-                bottom: `${bottomOffset}px`,
+                left: `${itemX}px`,
+                width: `${itemWidth}px`,
+                bottom: 0,
                 transform: `scale(${scale})`,
                 transformOrigin: "bottom center",
                 zIndex: Math.round(scale * 100),
@@ -332,14 +399,14 @@ export default function Carousel({ videos, onSelectVideo, selectedVideo }) {
                 onClick={() => handleClick(item)}
                 className="w-full"
                 style={{
-                  height: isMobile ? `${dimensions.cardWidth * 2.8}px` : `${CARD_HEIGHT}px`,
+                  height: `${itemHeight}px`,
                   objectFit: "cover",
                 }}
               />
               <div
                 className="text-center mt-2 font-HelveticaNeue text-base whitespace-nowrap"
                 style={{
-                  opacity: scale,
+                  opacity: 1,
                 }}
               >
                 {item.title || item.alt || ""}
