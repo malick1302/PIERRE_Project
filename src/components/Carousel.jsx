@@ -307,7 +307,7 @@ export default function Carousel({ videos, onSelectVideo, selectedVideo }) {
   const handleTouchMove = (e) => {
     if (isAutoCentering.current || targetItemRef.current) return;
     const delta = e.touches[0].clientX - lastTouchX.current;
-    targetSpeed.current = -delta * 0.4;
+    targetSpeed.current = -delta * 1.2; // Augmenté de 0.4 à 1.2 pour scroll plus rapide
     lastTouchX.current = e.touches[0].clientX;
   };
 
