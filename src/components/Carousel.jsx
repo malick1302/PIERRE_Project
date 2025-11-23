@@ -21,7 +21,15 @@ export default function Carousel({ videos, onSelectVideo, selectedVideo }) {
   const VISIBLE_ITEMS_MOBILE = 3;
 
   // Dimensions dynamiques calculées pour remplir la largeur
-  const [dimensions, setDimensions] = useState({ cardWidth: 100, gap: 60, sideWidth: 70 });
+  const [dimensions, setDimensions] = useState({
+    cardWidth: 100,
+    gap: 60,
+    sideWidth: 70,
+    centerHeight: 154,
+    sideHeight: 129,
+    centerX: 152,
+    sideX: 46
+  });
   const [isMobile, setIsMobile] = useState(false);
 
   // Calcul des dimensions pour que les images remplissent exactement la largeur
@@ -46,30 +54,35 @@ export default function Carousel({ videos, onSelectVideo, selectedVideo }) {
       const visibleItems = mobile ? VISIBLE_ITEMS_MOBILE : VISIBLE_ITEMS_DESKTOP;
 
       if (mobile) {
-        // Sur mobile : 3 images entièrement visibles et centrées
-        // Basé sur Figma: image centrale 86px, gap ~35px
-        // Calculer pour que les 3 images soient centrées et visibles
+        // Sur mobile : dimensions exactes depuis Figma (390 × 826)
+        // Image centrale : 86px × 154px, Position X: 152px, Y: 553px
+        // Images extérieures : 72px × 129px, Position Y: 576px
+        // Gap : 35px
         const figmaWidth = 390;
         const figmaCenterWidth = 86;
+        const figmaCenterHeight = 154;
+        const figmaSideWidth = 72;
+        const figmaSideHeight = 129;
         const figmaGap = 35;
+        const figmaCenterX = 152;
+        const figmaSideX = 46; // Position X de l'image gauche
         const scaleRatio = containerWidth / figmaWidth;
 
         const centerWidth = figmaCenterWidth * scaleRatio;
+        const centerHeight = figmaCenterHeight * scaleRatio;
+        const sideWidth = figmaSideWidth * scaleRatio;
+        const sideHeight = figmaSideHeight * scaleRatio;
         const gap = figmaGap * scaleRatio;
-        const sideWidth = centerWidth * 0.7; // Images extérieures 70% de la centrale
 
-        // Largeur totale des 3 images avec gaps
-        const totalWidth = sideWidth + gap + centerWidth + gap + sideWidth;
-
-        // Si la largeur totale dépasse, ajuster proportionnellement
-        if (totalWidth > containerWidth * 0.95) {
-          const adjustRatio = (containerWidth * 0.95) / totalWidth;
-          const adjustedCenterWidth = centerWidth * adjustRatio;
-          const adjustedGap = gap * adjustRatio;
-          setDimensions({ cardWidth: adjustedCenterWidth, gap: adjustedGap, sideWidth: adjustedCenterWidth * 0.7 });
-        } else {
-          setDimensions({ cardWidth: centerWidth, gap: gap, sideWidth: sideWidth });
-        }
+        setDimensions({
+          cardWidth: centerWidth,
+          gap: gap,
+          sideWidth: sideWidth,
+          centerHeight: centerHeight,
+          sideHeight: sideHeight,
+          centerX: figmaCenterX * scaleRatio,
+          sideX: figmaSideX * scaleRatio
+        });
       } else {
         // Sur desktop : calcul original
         const gapRatio = 0.6;
@@ -94,35 +107,33 @@ export default function Carousel({ videos, onSelectVideo, selectedVideo }) {
     if (!videoList.length || dimensions.cardWidth === 0) return;
 
     if (isMobile) {
-      // Sur mobile : centrer les 3 images visibles
+      // Sur mobile : positions exactes depuis Figma
       const rect = containerRef.current?.getBoundingClientRect();
       const containerWidth = rect ? rect.width : window.innerWidth;
+      const scaleRatio = containerWidth / 390; // Figma width = 390px
 
-      const centerWidth = dimensions.cardWidth;
-      const sideWidth = dimensions.sideWidth || centerWidth * 0.7;
-      const gap = dimensions.gap;
-
-      // Calculer la position pour centrer les 3 images
-      // Image centrale au centre de l'écran
-      const centerX = containerWidth / 2;
       const centerIndex = Math.floor(videoList.length / 2);
+      const figmaCenterX = 152;
+      const figmaSideX = 46;
+      const figmaRightX = 273;
 
       const initialPositions = videoList.map((v, i) => {
         const offset = i - centerIndex;
         let x;
 
         if (offset === -1) {
-          // Image gauche
-          x = centerX - centerWidth / 2 - gap - sideWidth;
+          // Image gauche : X = 46px sur Figma
+          x = figmaSideX * scaleRatio;
         } else if (offset === 0) {
-          // Image centrale
-          x = centerX - centerWidth / 2;
+          // Image centrale : X = 152px sur Figma
+          x = figmaCenterX * scaleRatio;
         } else if (offset === 1) {
-          // Image droite
-          x = centerX + centerWidth / 2 + gap;
+          // Image droite : X = 273px sur Figma
+          x = figmaRightX * scaleRatio;
         } else {
-          // Autres images (hors vue)
-          x = centerX - centerWidth / 2 + offset * (centerWidth + gap);
+          // Autres images : espacement régulier
+          const baseX = figmaSideX * scaleRatio;
+          x = baseX + (i - (centerIndex - 1)) * (dimensions.cardWidth + dimensions.gap);
         }
 
         return { ...v, x };
@@ -168,7 +179,23 @@ export default function Carousel({ videos, onSelectVideo, selectedVideo }) {
           if (!currentItem) return prev;
 
           // 1. Calcul de la distance du chemin le plus court
-          let itemCenter = currentItem.x + dimensions.cardWidth / 2;
+          // Sur mobile, déterminer la largeur réelle de l'image
+          let itemWidth = dimensions.cardWidth;
+          if (isMobile) {
+            const rect = containerRef.current.getBoundingClientRect();
+            const containerWidth = rect.width;
+            const scaleRatio = containerWidth / 390;
+            const figmaCenterX = 152 * scaleRatio;
+            const itemCenterX = currentItem.x + dimensions.cardWidth / 2;
+            const distanceFromCenter = Math.abs(itemCenterX - figmaCenterX);
+            // Si c'est l'image centrale, utiliser centerWidth, sinon sideWidth
+            if (distanceFromCenter < (dimensions.gap / 2)) {
+              itemWidth = dimensions.cardWidth; // Image centrale
+            } else {
+              itemWidth = dimensions.sideWidth || dimensions.cardWidth * 0.7; // Images extérieures
+            }
+          }
+          let itemCenter = currentItem.x + itemWidth / 2;
           let distance = center - itemCenter;
 
           if (distance > totalWidth / 2) distance -= totalWidth;
@@ -321,7 +348,7 @@ export default function Carousel({ videos, onSelectVideo, selectedVideo }) {
         className="relative bg-transparent cursor-pointer md:mt-3"
         style={{
           height: isMobile
-            ? `${(dimensions.cardWidth * 2.8) + 60}px`
+            ? `${(dimensions.centerHeight || 154) + 50}px`
             : `${CARD_HEIGHT + 50}px`
         }}
         onMouseMove={handleMouseMove}
@@ -334,44 +361,46 @@ export default function Carousel({ videos, onSelectVideo, selectedVideo }) {
           const rect = containerRef.current?.getBoundingClientRect();
           const center = rect ? rect.width / 2 : 0;
 
-          let scale, itemWidth, itemHeight, itemX;
+          let scale, itemWidth, itemHeight, itemX, bottomOffset;
 
           if (isMobile) {
-            // Sur mobile : 3 images, centrale plus grande
-            const centerWidth = dimensions.cardWidth;
-            const sideWidth = dimensions.sideWidth || centerWidth * 0.7;
-            const gap = dimensions.gap;
+            // Sur mobile : dimensions exactes depuis Figma
+            const centerWidth = dimensions.cardWidth; // 86px
+            const sideWidth = dimensions.sideWidth; // 72px
+            const centerHeight = dimensions.centerHeight || 154; // 154px
+            const sideHeight = dimensions.sideHeight || 129; // 129px
+            const rect = containerRef.current?.getBoundingClientRect();
+            const containerWidth = rect ? rect.width : window.innerWidth;
+            const scaleRatio = containerWidth / 390;
 
             // Déterminer quelle image c'est par rapport au centre
+            const figmaCenterX = 152 * scaleRatio;
             const itemCenter = item.x + centerWidth / 2;
-            const distance = Math.abs(itemCenter - center);
-            const isCenterImage = distance < gap;
+            const distance = Math.abs(itemCenter - figmaCenterX);
+            const isCenterImage = distance < (dimensions.gap / 2);
 
             if (isCenterImage) {
-              // Image centrale
+              // Image centrale : 86px × 154px, Y = 553px
               scale = 1;
               itemWidth = centerWidth;
+              itemHeight = centerHeight;
               itemX = item.x;
-              itemHeight = centerWidth * 2.8;
+              bottomOffset = 0; // Position Y = 553px (sera géré par le conteneur)
             } else {
-              // Images extérieures
-              scale = 0.7;
+              // Images extérieures : 72px × 129px, Y = 576px
+              scale = 1; // Pas de scale, juste dimensions différentes
               itemWidth = sideWidth;
-              itemHeight = sideWidth * 2.8;
-              // Ajuster la position X pour que l'image réduite soit bien positionnée
-              if (item.x < center) {
-                // Image gauche
-                itemX = item.x;
-              } else {
-                // Image droite
-                itemX = item.x + (centerWidth - sideWidth);
-              }
+              itemHeight = sideHeight;
+              itemX = item.x;
+              // Position Y plus basse : 576 - 553 = 23px de différence
+              bottomOffset = 23 * scaleRatio;
             }
           } else {
             // Desktop : comportement original
             itemWidth = dimensions.cardWidth;
             itemHeight = CARD_HEIGHT;
             itemX = item.x;
+            bottomOffset = 0;
             const itemCenter = item.x + dimensions.cardWidth / 2;
             const distance = Math.abs(itemCenter - center);
             const maxDistance = (dimensions.cardWidth + dimensions.gap) * 4;
@@ -386,7 +415,7 @@ export default function Carousel({ videos, onSelectVideo, selectedVideo }) {
               style={{
                 left: `${itemX}px`,
                 width: `${itemWidth}px`,
-                bottom: 0,
+                bottom: isMobile ? `${bottomOffset}px` : '0px',
                 transform: `scale(${scale})`,
                 transformOrigin: "bottom center",
                 zIndex: Math.round(scale * 100),
@@ -404,9 +433,10 @@ export default function Carousel({ videos, onSelectVideo, selectedVideo }) {
                 }}
               />
               <div
-                className="text-center mt-2 font-HelveticaNeue text-base whitespace-nowrap"
+                className="text-center font-HelveticaNeue text-base whitespace-nowrap"
                 style={{
                   opacity: 1,
+                  marginTop: isMobile ? '8px' : '8px', // 8px entre image et titre
                 }}
               >
                 {item.title || item.alt || ""}
