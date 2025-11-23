@@ -21,6 +21,10 @@ export default {
         Helvetica: ['Helvetica', 'sans-serif'],
         HelveticaNeue: ['HelveticaNeue', 'sans-serif'],
       },
+
+      fontWeight: {
+        '950': '950', // Poids personnalisé
+      },
     },
   },
   plugins: [

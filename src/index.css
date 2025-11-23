@@ -13,7 +13,8 @@
 
 
 body {
-  color: #3137FD;
+  /* color: #3137FD; */
+  color: #494949;
 }
 html, body, #root {
   margin: 0;
@@ -94,7 +95,8 @@ iframe {
 }
 
 p{
-  color: #3137FD;
+  /* color: #3137FD; */
+  color: #494949;
 }
 
 

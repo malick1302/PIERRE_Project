@@ -14,8 +14,15 @@ export default function VideoList() {
         const response = await fetch("/videos.json");
         if (!response.ok) throw new Error("Failed to fetch videos.");
         const data = await response.json();
-        setVideos(data);
-        setSelectedVideo(data[0]);
+        
+        // Convertir les URLs player.vimeo.com en vimeo.com pour ReactPlayer
+        const processedData = data.map(video => ({
+          ...video,
+          url: video.url?.replace('https://player.vimeo.com/video/', 'https://vimeo.com/') || video.url
+        }));
+        
+        setVideos(processedData);
+        setSelectedVideo(processedData[0]);
       } catch (err) {
         setError(err.message);
       }
@@ -50,16 +57,16 @@ export default function VideoList() {
                   <ReactPlayer
                     url={selectedVideo.url}
                     controls
-                    playing
-                    muted
+                    playing={false}
+                    muted={false}
                     width="100%"
                     height="100%"
                     style={{ aspectRatio: "16/9" }}
                     config={{
                       vimeo: {
                         playerOptions: {
-                          autoplay: true,
-                          muted: true,
+                          autoplay: false,
+                          muted: false,
                           controls: true
                         }
                       }
@@ -81,7 +88,7 @@ export default function VideoList() {
           </div>
 
           {/* Espacement Video → Carousel : Mobile 180px (incluant titre/desc), Desktop 49px */}
-          <div style={{ height: '180px' }} className="md:hidden" />
+          <div style={{ height: '80px' }} className="md:hidden" />
           <div style={{ height: '49px' }} className="hidden md:block" />
 
           {/* Carrousel */}
