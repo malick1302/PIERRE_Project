@@ -4,21 +4,21 @@
     "title": "Test Video - Big Buck Bunny",
     "url": "https://player.vimeo.com/video/76979871",
     "thumbnail": "/images/basket.png",
-    "description": "Test public video"
+    "description": "public video"
   },
   {
     "id": 2,
     "title": "Test Video - Tears of Steel",
     "url": "https://player.vimeo.com/video/148751763",
     "thumbnail": "/images/flower.png",
-    "description": "Test public video"
+    "description": "public video"
   },
   {
     "id": 3,
     "title": "Your Video",
     "url": "https://player.vimeo.com/video/1128798629",
     "thumbnail": "/images/grey.png",
-    "description": "Your original video"
+    "description": "original video"
   },
   {
     "id": 4,

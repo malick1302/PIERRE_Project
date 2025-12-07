@@ -26,6 +26,7 @@ const About = () => {
                         <img src={studio3} alt="Photo 1 du studio" />
                     </div>
                 </div>
+
             </div>
         </div>
     );

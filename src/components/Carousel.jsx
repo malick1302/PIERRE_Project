@@ -66,7 +66,7 @@ export default function Carousel({ videos, onSelectVideo, selectedVideo }) {
         const figmaSideHeight = 129;
         const figmaGap = 34;
         const figmaCenterX = 152;
-        const figmaSideX = 46; // Position X de l'image gauche
+        const figmaSideX = 36; // Position X de l'image gauche
         const scaleRatio = containerWidth / figmaWidth;
 
         const centerWidth = figmaCenterWidth * scaleRatio;
@@ -124,7 +124,7 @@ export default function Carousel({ videos, onSelectVideo, selectedVideo }) {
 
       const centerIndex = Math.floor(videoList.length / 2);
       const figmaCenterX = 152;
-      const figmaSideX = 46;
+      const figmaSideX = 36;
       const figmaRightX = 273;
 
       const initialPositions = videoList.map((v, i) => {
