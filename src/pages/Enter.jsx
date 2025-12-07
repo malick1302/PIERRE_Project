@@ -136,7 +136,7 @@ const Enter = () => {
           </div>
 
           {/* Bouton Son - Bas droite, aligné avec Info */}
-          <div className="absolute bottom-0 right-0  md:p-2 z-[100] pointer-events-auto md:mx-[36px]">
+          <div className="absolute bottom-10 right-0  md:p-2 z-[100] pointer-events-auto md:bottom-0 md:mx-[36px]">
   <button
     ref={soundButtonRef}
     onClick={toggleMute}
