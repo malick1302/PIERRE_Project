@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
 import ReactPlayer from "react-player";
 import Carousel from "./Carousel";
-import Navbar from "./Navbar";
 
 export default function VideoList() {
   const [videos, setVideos] = useState([]);
@@ -14,13 +13,16 @@ export default function VideoList() {
         const response = await fetch("/videos.json");
         if (!response.ok) throw new Error("Failed to fetch videos.");
         const data = await response.json();
-        
+
         // Convertir les URLs player.vimeo.com en vimeo.com pour ReactPlayer
-        const processedData = data.map(video => ({
+        const processedData = data.map((video) => ({
           ...video,
-          url: video.url?.replace('https://player.vimeo.com/video/', 'https://vimeo.com/') || video.url
+          url: video.url?.replace(
+            "https://player.vimeo.com/video/",
+            "https://vimeo.com/"
+          ) || video.url,
         }));
-        
+
         setVideos(processedData);
         setSelectedVideo(processedData[0]);
       } catch (err) {
@@ -39,21 +41,21 @@ export default function VideoList() {
         </div>
       ) : (
         <>
-          <Navbar />
-
           {/* Espacement Navbar → Video : Mobile 41px, Desktop 68px */}
-          <div style={{ height: '41px' }} className="md:hidden" />
-          <div style={{ height: '68px' }} className="hidden md:block" />
+          <div style={{ height: "41px" }} className="md:hidden" />
+          <div style={{ height: "17px" }} className="hidden md:block" />
 
-          <div className="source-sans-light flex flex-col md:flex-row md:gap-6">
+          <div className="source-sans-light flex flex-col md:flex-row md:gap-6 md:items-start">
             {/* Player principal */}
-            <div className="w-full border border-black md:w-[792px] md:h-[445px] md:border-none">
+            <div className="w-full border border-black md:w-[860px] md:border-none">
               {selectedVideo && (
-                <div className="overflow-hidden roar-blue w-full md:w-[792px]" 
-                     style={{
-                       height: 'auto',
-                       aspectRatio: '16/9'
-                     }}>
+                <div
+                  className="overflow-hidden roar-blue w-full md:w-[860px]"
+                  style={{
+                    height: "auto",
+                    aspectRatio: "16/9",
+                  }}
+                >
                   <ReactPlayer
                     url={selectedVideo.url}
                     controls
@@ -67,9 +69,9 @@ export default function VideoList() {
                         playerOptions: {
                           autoplay: false,
                           muted: false,
-                          controls: true
-                        }
-                      }
+                          controls: true,
+                        },
+                      },
                     }}
                   />
                 </div>
@@ -77,8 +79,8 @@ export default function VideoList() {
             </div>
 
             {/* Infos vidéo */}
-            <div className="w-full md:flex-1 flex flex-col justify-start font-HelveticaNeuet mt-4 md:mt-0">
-              <h3 className="text-2xl md:text-3xl md:mb-0">
+            <div className="w-full md:w-[300px] flex flex-col justify-start font-HelveticaNeue mt-4 md:mt-0 md:ml-6">
+              <h3 className="text-2xl md:text-3xl md:mb-2">
                 {selectedVideo?.title}
               </h3>
               <p className="text-sm font-HelveticaNeue">
@@ -88,8 +90,8 @@ export default function VideoList() {
           </div>
 
           {/* Espacement Video → Carousel : Mobile 180px (incluant titre/desc), Desktop 49px */}
-          <div style={{ height: '80px' }} className="md:hidden" />
-          <div style={{ height: '49px' }} className="hidden md:block" />
+          <div style={{ height: "80px" }} className="md:hidden" />
+          <div style={{ height: "49px" }} className="hidden md:block" />
 
           {/* Carrousel */}
           <Carousel

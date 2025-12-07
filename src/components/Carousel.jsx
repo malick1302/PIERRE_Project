@@ -16,7 +16,7 @@ export default function Carousel({ videos, onSelectVideo, selectedVideo }) {
 
   const videoList = videos || [];
 
-  const CARD_HEIGHT = 240;
+  const CARD_HEIGHT = 213;
   const VISIBLE_ITEMS_DESKTOP = 9;
   const VISIBLE_ITEMS_MOBILE = 3;
 
@@ -352,10 +352,10 @@ export default function Carousel({ videos, onSelectVideo, selectedVideo }) {
   }, [items, dimensions]);
 
   return (
-    <div className="w-full relative overflow-hidden md:mb-3 md:mt-1">
+    <div className="w-full relative overflow-hidden md:mb-3">
       <div
         ref={containerRef}
-        className="relative bg-transparent cursor-pointer md:mt-3"
+        className="relative bg-transparent cursor-pointer "
         style={{
           height: isMobile
             ? `${(dimensions.centerHeight || 154) + 50}px`

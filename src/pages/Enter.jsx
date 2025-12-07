@@ -81,11 +81,11 @@ const Enter = () => {
   };
 
   return (
-    <div className="relative w-screen h-screen overflow-hidden scrollbar-hide">
+    <div className="relative w-screen h-screen overflow-hidden scrollbar-hide homet">
       {/* Navbar */}
-      <div className="min-h-screen p-4 md:p-6 relative z-[100]">
+      {/* <div className="min-h-screen  text-m p-4 md:p-6 relative z-[100] homet"> */}
         <Navbar />
-      </div>
+      {/* </div> */}
 
       {/* Vidéo Vimeo */}
       <div className="absolute top-0 left-0 w-full h-full overflow-hidden">
@@ -128,23 +128,27 @@ const Enter = () => {
             {/* Bouton Entrer */}
             <button
               ref={enterButtonRef}
-              className="px-8 py-4 text-lg font-semibold text-white bg-black/30 hover:bg-black/80 transition-all duration-300"
+              className="px-8 py-4 text-[24px] font-semibold homet hover:bg-black/80 transition-all duration-300 font-HelveticaNeue  md:text-[40px]"
               onClick={() => (window.location.href = "/Home")}
             >
-              Entrer
+              Enter
             </button>
           </div>
 
           {/* Bouton Son - Bas droite, aligné avec Info */}
-          <div className="absolute bottom-0 right-0 p-4 md:p-6 z-[100] pointer-events-auto">
-            <button
-              ref={soundButtonRef}
-              onClick={toggleMute}
-              className="text-lg text-white bg-black/30 hover:bg-black/80 transition-all duration-300 font-HelveticaNeue"
-            >
-              {isMuted ? "SOUND OFF" : "SOUND ON"}
-            </button>
-          </div>
+          <div className="absolute bottom-0 right-0  md:p-2 z-[100] pointer-events-auto md:mx-[36px]">
+  <button
+    ref={soundButtonRef}
+    onClick={toggleMute}
+    className="text-lg text-white  transition-all duration-300 font-HelveticaNeue"
+  >
+    <img
+      src={isMuted ? "/images/soundoff.png" : "/images/soundon.png"}
+      alt={isMuted ? "Sound Off" : "Sound On"}
+      className="h-[63px] w-[63px] md:w-[100px] md:h-[100px]"
+    />
+  </button>
+</div>
         </>
       )}
     </div>
