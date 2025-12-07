@@ -5,12 +5,13 @@ import studio3 from "../assets/images/studio3.png";
 const About = () => {
     return (
         <div className="h-screen overflow-hidden scrollbar-hide font-HelveticaNeue">
+            <Navbar />
             <div className="min-h-screen p-4 md:p-6">
-                <Navbar />
+                
 
                 <div className="ml-0 flex flex-col md:flex-row md:gap-6 md:ml-0 md:mb-0 md:space-x-6">
                     {/* Texte */}
-                    <div className="mt-12 w-full md:w-1/3 flex flex-col justify-start md:text-xl md:mb-0 order-2 md:order-1">
+                    <div className="mt-12 w-full md:w-1/3 flex flex-col justify-start md:ml-8 md:text-xl md:mb-0 order-2 md:order-1">
                         <h3>
                             Roar is a Paris-based studio crafting custom music and sound design for brands, fashion
                             and film. Clients include Converse, Chiefs, Grand Marnier x Future, AD Council, etc.
@@ -22,7 +23,7 @@ const About = () => {
                     </div>
 
                     {/* Image */}
-                    <div className="w-full mt-8 md:w-3/5 md:mt-9 order-1 md:order-2">
+                    <div className="w-full mt-8 md:w-3/5 md:mt-9 order-1 md:order-2 md:pl-12">
                         <img src={studio3} alt="Photo 1 du studio" />
                     </div>
                 </div>
