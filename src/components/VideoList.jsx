@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react";
-import ReactPlayer from "react-player";
 import Carousel from "./Carousel";
 
 export default function VideoList() {
@@ -14,18 +13,32 @@ export default function VideoList() {
         if (!response.ok) throw new Error("Failed to fetch videos.");
         const data = await response.json();
 
-        // Convertir les URLs player.vimeo.com en vimeo.com pour ReactPlayer
-        const processedData = data.map((video) => ({
-          ...video,
-          url: video.url?.replace(
-            "https://player.vimeo.com/video/",
-            "https://vimeo.com/"
-          ) || video.url,
-        }));
+        // Process videos - ensure player.vimeo.com format
+        const processedData = data.map((video) => {
+          let videoUrl = video.url || video.video;
+          
+          // Convert vimeo.com to player.vimeo.com for iframe embedding
+          if (videoUrl?.includes('vimeo.com/') && !videoUrl.includes('player.vimeo.com')) {
+            const videoId = videoUrl.split('vimeo.com/')[1].split('?')[0]; // Get clean video ID
+            videoUrl = `https://player.vimeo.com/video/${videoId}`;
+          }
+          
+          // Remove any existing parameters - we'll add our own
+          if (videoUrl?.includes('?')) {
+            videoUrl = videoUrl.split('?')[0];
+          }
+          
+          return {
+            ...video,
+            url: videoUrl,
+          };
+        });
 
+        console.log("Processed videos:", processedData);
         setVideos(processedData);
         setSelectedVideo(processedData[0]);
       } catch (err) {
+        console.error("Error loading videos:", err);
         setError(err.message);
       }
     };
@@ -46,34 +59,36 @@ export default function VideoList() {
           <div style={{ height: "17px" }} className="hidden md:block" />
 
           <div className="source-sans-light flex flex-col md:flex-row md:gap-6 md:items-start">
-            {/* Player principal */}
-            <div className="w-full border border-black md:w-[860px] md:border-none">
-              {selectedVideo && (
+            {/* Player principal - Using iframe with proper embed parameters */}
+            <div className="w-full border border-black md:w-[860px] md:border-none relative z-10">
+              {selectedVideo && selectedVideo.url ? (
                 <div
-                  className="overflow-hidden roar-blue w-full md:w-[860px]"
+                  className="w-full md:w-[860px] relative bg-black"
                   style={{
-                    height: "auto",
-                    aspectRatio: "16/9",
+                    paddingTop: "56.25%", // 16:9 aspect ratio
+                    position: "relative"
                   }}
                 >
-                  <ReactPlayer
-                    url={selectedVideo.url}
-                    controls
-                    playing={false}
-                    muted={false}
-                    width="100%"
-                    height="100%"
-                    style={{ aspectRatio: "16/9" }}
-                    config={{
-                      vimeo: {
-                        playerOptions: {
-                          autoplay: false,
-                          muted: false,
-                          controls: true,
-                        },
-                      },
+                  <iframe
+                    key={selectedVideo.id}
+                    src={`${selectedVideo.url}?title=0&byline=0&portrait=0`}
+                    style={{
+                      position: "absolute",
+                      top: 0,
+                      left: 0,
+                      width: "100%",
+                      height: "100%",
+                      border: 0,
+                      zIndex: 10
                     }}
+                    allow="autoplay; fullscreen; picture-in-picture; clipboard-write"
+                    allowFullScreen
+                    title={selectedVideo.title}
                   />
+                </div>
+              ) : (
+                <div className="flex items-center justify-center h-[200px] md:h-[483px] bg-gray-200">
+                  <p>Loading video...</p>
                 </div>
               )}
             </div>

@@ -6,9 +6,9 @@ import Navbar from '../components/Navbar';
 const Home = () => {
     return (
         <div className="h-screen overflow-hidden scrollbar-hide">
-<Navbar />
+            <Navbar />
             < VideoList />
-            
+
         </div>
 
     );
