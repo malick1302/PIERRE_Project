@@ -4,7 +4,7 @@ export default function Navbar() {
             {/* Titre principal */}
             <h1
                 onClick={() => window.location.href = "/Home"}
-                className="font-HelveticaNeue text-[15px] md:text-[25px]"
+                className="font-HelveticaNeue text-[15px] md:text-[25px] cursor-pointer"
             >
                 <span className="font-[950] text-[30px] md:text-[50px]">ROAR</span> music & sound.
             </h1>
@@ -12,7 +12,7 @@ export default function Navbar() {
             {/* Lien Info */}
             <h2
                 onClick={() => window.location.href = "/About"}
-                className="font-HelveticaNeue font-[950] text-[30px] md:text-[50px]"
+                className="font-HelveticaNeue font-[950] text-[30px] md:text-[50px] cursor-pointer"
             >
                 Info
             </h2>
