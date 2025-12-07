@@ -13,14 +13,17 @@ export default function VideoList() {
         if (!response.ok) throw new Error("Failed to fetch videos.");
         const data = await response.json();
 
+        // Process videos - ensure player.vimeo.com format
         const processedData = data.map((video) => {
           let videoUrl = video.url || video.video;
           
+          // Convert vimeo.com to player.vimeo.com for iframe embedding
           if (videoUrl?.includes('vimeo.com/') && !videoUrl.includes('player.vimeo.com')) {
-            const videoId = videoUrl.split('vimeo.com/')[1].split('?')[0];
+            const videoId = videoUrl.split('vimeo.com/')[1].split('?')[0]; // Get clean video ID
             videoUrl = `https://player.vimeo.com/video/${videoId}`;
           }
           
+          // Remove any existing parameters - we'll add our own
           if (videoUrl?.includes('?')) {
             videoUrl = videoUrl.split('?')[0];
           }
@@ -44,24 +47,25 @@ export default function VideoList() {
   }, []);
 
   return (
-    <div className="flex-1 flex flex-col px-[15px] md:px-[46px] overflow-hidden">
+    <div className="min-h-screen px-[15px] md:px-[46px]">
       {error ? (
         <div className="text-red-500 text-center">
           <p>{error}</p>
         </div>
       ) : (
         <>
-          {/* Espacement Navbar → Video : Mobile 2vh, Desktop 2vh */}
-          <div className="h-[2vh]" />
+          {/* Espacement Navbar → Video : Mobile 41px, Desktop 68px */}
+          <div style={{ height: "41px" }} className="md:hidden" />
+          <div style={{ height: "17px" }} className="hidden md:block" />
 
-          <div className="source-sans-light flex flex-col md:flex-row md:gap-6 md:items-start flex-shrink-0">
-            {/* Player principal */}
-            <div className="w-full md:w-[60vw] md:max-w-[860px] border border-black md:border-none relative z-10">
+          <div className="source-sans-light flex flex-col md:flex-row md:gap-6 md:items-start">
+            {/* Player principal - Using iframe with proper embed parameters */}
+            <div className="w-full border border-black md:w-[860px] md:border-none relative z-10">
               {selectedVideo && selectedVideo.url ? (
                 <div
-                  className="w-full relative bg-black"
+                  className="w-full md:w-[860px] relative bg-black"
                   style={{
-                    paddingTop: "56.25%",
+                    paddingTop: "56.25%", // 16:9 aspect ratio
                     position: "relative"
                   }}
                 >
@@ -83,15 +87,15 @@ export default function VideoList() {
                   />
                 </div>
               ) : (
-                <div className="flex items-center justify-center h-[30vh] bg-gray-200">
+                <div className="flex items-center justify-center h-[200px] md:h-[483px] bg-gray-200">
                   <p>Loading video...</p>
                 </div>
               )}
             </div>
 
             {/* Infos vidéo */}
-            <div className="w-full md:flex-1 md:max-w-[300px] flex flex-col justify-start font-HelveticaNeue mt-4 md:mt-0">
-              <h3 className="text-xl md:text-2xl md:mb-2">
+            <div className="w-full md:w-[300px] flex flex-col justify-start font-HelveticaNeue mt-4 md:mt-0 md:ml-6">
+              <h3 className="text-2xl md:text-3xl md:mb-2">
                 {selectedVideo?.title}
               </h3>
               <p className="text-sm font-HelveticaNeue">
@@ -100,17 +104,16 @@ export default function VideoList() {
             </div>
           </div>
 
-          {/* Espacement Video → Carousel : Mobile 4vh, Desktop 3vh */}
-          <div className="h-[4vh] md:h-[3vh]" />
+          {/* Espacement Video → Carousel : Mobile 180px (incluant titre/desc), Desktop 49px */}
+          <div style={{ height: "80px" }} className="md:hidden" />
+          <div style={{ height: "49px" }} className="hidden md:block" />
 
-          {/* Carrousel - prend l'espace restant */}
-          <div className="flex-1 min-h-0">
-            <Carousel
-              videos={videos}
-              onSelectVideo={setSelectedVideo}
-              selectedVideo={selectedVideo}
-            />
-          </div>
+          {/* Carrousel */}
+          <Carousel
+            videos={videos}
+            onSelectVideo={setSelectedVideo}
+            selectedVideo={selectedVideo}
+          />
         </>
       )}
     </div>
