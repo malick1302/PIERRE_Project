@@ -145,7 +145,7 @@ const Enter = () => {
     <img
       src={isMuted ? "/images/soundoff.png" : "/images/soundon.png"}
       alt={isMuted ? "Sound Off" : "Sound On"}
-      className="h-[63px] w-[63px] md:w-[100px] md:h-[100px]"
+      className=" mb-12 h-[63px] w-[63px]  md:mb-0 md:w-[100px] md:h-[100px]"
     />
   </button>
 </div>
