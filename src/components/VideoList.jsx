@@ -13,16 +13,14 @@ export default function VideoList() {
         if (!response.ok) throw new Error("Failed to fetch videos.");
         const data = await response.json();
 
+        // Process videos - convert vimeo.com URLs to player.vimeo.com format for iframes
         const processedData = data.map((video) => {
           let videoUrl = video.url || video.video;
           
+          // Convert vimeo.com to player.vimeo.com for iframe embedding
           if (videoUrl?.includes('vimeo.com/') && !videoUrl.includes('player.vimeo.com')) {
-            const videoId = videoUrl.split('vimeo.com/')[1].split('?')[0];
+            const videoId = videoUrl.split('vimeo.com/')[1];
             videoUrl = `https://player.vimeo.com/video/${videoId}`;
-          }
-          
-          if (videoUrl?.includes('?')) {
-            videoUrl = videoUrl.split('?')[0];
           }
           
           return {
@@ -51,36 +49,27 @@ export default function VideoList() {
         </div>
       ) : (
         <>
-          {/* Espacement Navbar → Video : Mobile 41px, Desktop 17px */}
+          {/* Espacement Navbar → Video : Mobile 41px, Desktop 68px */}
           <div style={{ height: "41px" }} className="md:hidden" />
           <div style={{ height: "17px" }} className="hidden md:block" />
 
           <div className="source-sans-light flex flex-col md:flex-row md:gap-6 md:items-start">
-            {/* Player principal */}
+            {/* Player principal - Using iframe like Enter.jsx */}
             <div className="w-full border border-black md:w-[860px] md:border-none">
               {selectedVideo && selectedVideo.url ? (
                 <div
-                  className="roar-blue w-full md:w-[860px]"
+                  className="overflow-hidden roar-blue w-full md:w-[860px] relative"
                   style={{
-                    width: "100%",
                     height: "auto",
                     aspectRatio: "16/9",
-                    position: "relative",
-                    backgroundColor: "#000"
                   }}
                 >
                   <iframe
-                    key={selectedVideo.id}
-                    src={`${selectedVideo.url}?title=0&byline=0&portrait=0`}
-                    style={{
-                      position: "absolute",
-                      top: 0,
-                      left: 0,
-                      width: "100%",
-                      height: "100%",
-                      border: 0
-                    }}
-                    allow="autoplay; fullscreen; picture-in-picture; clipboard-write"
+                    key={selectedVideo.id} // Force reload when video changes
+                    src={`${selectedVideo.url}?autoplay=0&loop=0&muted=0`}
+                    className="absolute top-0 left-0 w-full h-full"
+                    frameBorder="0"
+                    allow="autoplay; fullscreen; picture-in-picture"
                     allowFullScreen
                     title={selectedVideo.title}
                   />
@@ -103,7 +92,7 @@ export default function VideoList() {
             </div>
           </div>
 
-          {/* Espacement Video → Carousel : Mobile 80px, Desktop 49px */}
+          {/* Espacement Video → Carousel : Mobile 180px (incluant titre/desc), Desktop 49px */}
           <div style={{ height: "80px" }} className="md:hidden" />
           <div style={{ height: "49px" }} className="hidden md:block" />
 
