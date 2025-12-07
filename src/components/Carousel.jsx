@@ -352,16 +352,15 @@ export default function Carousel({ videos, onSelectVideo, selectedVideo }) {
   }, [items, dimensions]);
 
   return (
-    <div className="w-full h-full relative overflow-hidden flex items-end">
-
-<div
-  ref={containerRef}
-  className="relative bg-transparent cursor-pointer w-full"
-  style={{
-    height: isMobile
-      ? `${(dimensions.centerHeight || 154) + 50}px`
-      : "263px" // FIXED HEIGHT: 213px cards + 50px for titles
-  }}
+    <div className="w-full relative overflow-hidden md:mb-3">
+      <div
+        ref={containerRef}
+        className="relative bg-transparent cursor-pointer "
+        style={{
+          height: isMobile
+            ? `${(dimensions.centerHeight || 154) + 50}px`
+            : `${CARD_HEIGHT + 50}px`
+        }}
         onMouseMove={handleMouseMove}
         onMouseLeave={handleMouseLeave}
         onTouchStart={handleTouchStart}
