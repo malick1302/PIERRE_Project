@@ -7,9 +7,7 @@ export default {
   theme: {
     extend: {
       colors: {
-        // couleurs personnalisées
         'roar-blue': '#3137FD',
-        //bg -->
         'roar-light': 'F8F8F8',
         'greyh': 'D1D1D1',
         'roar-dark': '#3137FD',
@@ -21,9 +19,17 @@ export default {
         Helvetica: ['Helvetica', 'sans-serif'],
         HelveticaNeue: ['HelveticaNeue', 'sans-serif'],
       },
-
       fontWeight: {
-        '950': '950', // Poids personnalisé
+        '950': '950',
+      },
+      // ✅ Marges personnalisées responsive
+      spacing: {
+        // Mobile
+        'roar-x-mobile': '17.22px',
+        'roar-y-mobile': '18px',
+        // Desktop/Tablette (md et plus)
+        'roar-x-desktop': '31.91px',
+        'roar-y-desktop': '28px',
       },
     },
   },
