@@ -14,7 +14,6 @@ const Enter = () => {
   const [isMuted, setIsMuted] = useState(true);
 
   useEffect(() => {
-    // Animation loader
     gsap.fromTo(
       loaderRef.current,
       { scale: 0, opacity: 0 },
@@ -30,13 +29,11 @@ const Enter = () => {
     );
   }, []);
 
-  // Dès que la vidéo Vimeo est prête
   const handleVideoLoad = () => {
     setVideoReady(true);
     fadeOutLoader();
   };
 
-  // Disparition du loader + apparition des boutons
   const fadeOutLoader = () => {
     gsap.to(overlayRef.current, {
       opacity: 0,
@@ -46,7 +43,6 @@ const Enter = () => {
 
     gsap.to(videoRef.current, { opacity: 1, duration: 1 });
 
-    // Apparition du bouton son et "Entrer"
     gsap.fromTo(
       soundButtonRef.current,
       { opacity: 0, y: -10 },
@@ -59,7 +55,6 @@ const Enter = () => {
     );
   };
 
-  // Toggle du son
   const toggleMute = async () => {
     const player = new Player(videoRef.current);
     if (isMuted) {
@@ -72,7 +67,6 @@ const Enter = () => {
       setIsMuted(true);
     }
 
-    // petite anim sur le bouton
     gsap.fromTo(
       soundButtonRef.current,
       { scale: 1.2 },
@@ -82,12 +76,12 @@ const Enter = () => {
 
   return (
     <div className="relative w-screen h-screen overflow-hidden scrollbar-hide homet">
-      {/* Navbar */}
-      {/* <div className="min-h-screen  text-m p-4 md:p-6 relative z-[100] homet"> */}
+      {/* ✅ Navbar avec marge top responsive */}
+      <div >
         <Navbar />
-      {/* </div> */}
+      </div>
 
-      {/* Vidéo Vimeo */}
+      {/* Vidéo Vimeo - FULLSCREEN sans marges */}
       <div className="absolute top-0 left-0 w-full h-full overflow-hidden">
         <iframe
           ref={videoRef}
@@ -125,30 +119,30 @@ const Enter = () => {
       {!loading && (
         <>
           <div className="absolute inset-0 flex flex-col items-center justify-center z-[100] pointer-events-auto">
-            {/* Bouton Entrer */}
             <button
               ref={enterButtonRef}
-              className="px-8 py-4 text-[24px] font-semibold homet hover:bg-black/80 transition-all duration-300 font-HelveticaNeue  md:text-[40px]"
+              className="px-8 py-4 text-[24px] font-semibold homet transition-all duration-300 font-HelveticaNeue md:text-[40px]"
               onClick={() => (window.location.href = "/Home")}
             >
               Enter
             </button>
           </div>
 
-          {/* Bouton Son - Bas droite, aligné avec Info */}
-          <div className="absolute bottom-10 right-0  md:p-2 z-[100] pointer-events-auto md:bottom-0 md:mx-[36px]">
-  <button
-    ref={soundButtonRef}
-    onClick={toggleMute}
-    className="text-lg text-white  transition-all duration-300 font-HelveticaNeue"
-  >
-    <img
-      src={isMuted ? "/images/soundoff.png" : "/images/soundon.png"}
-      alt={isMuted ? "Sound Off" : "Sound On"}
-      className=" mb-12 h-[63px] w-[63px]  md:mb-0 md:w-[100px] md:h-[100px]"
-    />
-  </button>
-</div>
+          {/* ✅ Bouton Son - Marges spécifiques (pas les marges standards) */}
+          {/* Mobile: bottom-10 (40px), Desktop: bottom + right avec mx-[36px] */}
+          <div className="absolute bottom-[4.13px] right-0 md:bottom-[7.77px] md:right-0 md:p-2 md:mx-[36px] z-[100] pointer-events-auto">
+            <button
+              ref={soundButtonRef}
+              onClick={toggleMute}
+              className="text-lg text-white transition-all duration-300 font-HelveticaNeue"
+            >
+              <img
+                src={isMuted ? "/images/soundoff.png" : "/images/soundon.png"}
+                alt={isMuted ? "Sound Off" : "Sound On"}
+                className="h-[52px] w-[52px] md:mb-0 md:w-[100px] md:h-[100px] md:h-[75px] md:w-[75px]"
+              />
+            </button>
+          </div>
         </>
       )}
     </div>
