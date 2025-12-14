@@ -75,9 +75,9 @@ const Enter = () => {
   };
 
   return (
-    <div className="relative w-screen h-screen overflow-hidden scrollbar-hide homet">
+    <div className="relative w-screen h-[100dvh] overflow-hidden scrollbar-hide homet">
       {/* ✅ Navbar avec marge top responsive */}
-      <div >
+      <div className="pt-roar-y-mobile md:pt-roar-y-desktop relative z-[100]">
         <Navbar />
       </div>
 
@@ -121,16 +121,16 @@ const Enter = () => {
           <div className="absolute inset-0 flex flex-col items-center justify-center z-[100] pointer-events-auto">
             <button
               ref={enterButtonRef}
-              className="px-8 py-4 text-[24px] font-semibold homet transition-all duration-300 font-HelveticaNeue md:text-[40px]"
+              className="px-8 py-4 text-[24px] font-semibold homet font-HelveticaNeue md:text-[40px]"
               onClick={() => (window.location.href = "/Home")}
             >
               Enter
             </button>
           </div>
 
-          {/* ✅ Bouton Son - Marges spécifiques (pas les marges standards) */}
-          {/* Mobile: bottom-10 (40px), Desktop: bottom + right avec mx-[36px] */}
-          <div className="absolute bottom-[4.13px] right-0 md:bottom-[7.77px] md:right-0 md:p-2 md:mx-[36px] z-[100] pointer-events-auto">
+          {/* ✅ Bouton Son - Marges spécifiques avec safe-area */}
+          {/* Mobile: bottom avec safe-area-inset, Desktop: bottom + right avec mx-[36px] */}
+          <div className="absolute bottom-[max(40px,env(safe-area-inset-bottom))] right-0 md:bottom-0 md:right-0 md:p-2 md:mx-[36px] z-[100] pointer-events-auto">
             <button
               ref={soundButtonRef}
               onClick={toggleMute}
@@ -139,7 +139,7 @@ const Enter = () => {
               <img
                 src={isMuted ? "/images/soundoff.png" : "/images/soundon.png"}
                 alt={isMuted ? "Sound Off" : "Sound On"}
-                className="h-[52px] w-[52px] md:mb-0 md:w-[100px] md:h-[100px] md:h-[75px] md:w-[75px]"
+                className="h-[63px] w-[63px] md:mb-0 md:w-[100px] md:h-[100px]"
               />
             </button>
           </div>

@@ -28,6 +28,14 @@ body {
   overflow: hidden;
   height: 100%;
 }
+
+html,
+body {
+  overflow: hidden;
+  height: 100dvh; /* ✅ Ajoute cette ligne */
+  height: 100vh;  /* Fallback pour anciens navigateurs */
+}
+
 .Playfair-d-sc {
 
   font-family: 'Playfair Display SC', sans-serif;
