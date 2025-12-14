@@ -121,25 +121,37 @@ const Enter = () => {
           <div className="absolute inset-0 flex flex-col items-center justify-center z-[100] pointer-events-auto">
             <button
               ref={enterButtonRef}
-              className="px-8 py-4 text-[24px] font-semibold homet font-HelveticaNeue md:text-[40px]"
+              className="px-8 py-4 text-[24px] font-semibold homet hover:bg-black/80 transition-all duration-300 font-HelveticaNeue md:text-[40px]"
               onClick={() => (window.location.href = "/Home")}
             >
               Enter
             </button>
           </div>
 
-          {/* ✅ Bouton Son - Marges spécifiques avec safe-area */}
-          {/* Mobile: bottom avec safe-area-inset, Desktop: bottom + right avec mx-[36px] */}
-          <div className="absolute bottom-[max(40px,env(safe-area-inset-bottom))] right-0 md:bottom-0 md:right-0 md:p-2 md:mx-[36px] z-[100] pointer-events-auto">
+          {/* ✅ Bouton Son - Dimensions et marges exactes Figma */}
+          {/* Mobile: mb=4.13px, Logo=52x52px | Desktop: mb=7.7px, Logo=75x75px */}
+          <div 
+            className="absolute z-[100] pointer-events-auto"
+            style={{
+              bottom: 'max(4.13px, env(safe-area-inset-bottom))',
+              right: '0'
+            }}
+          >
             <button
               ref={soundButtonRef}
               onClick={toggleMute}
-              className="text-lg text-white transition-all duration-300 font-HelveticaNeue"
+              className="text-lg text-white transition-all duration-300 font-HelveticaNeue block md:mr-[36px]"
+              style={{
+                marginBottom: '4.13px'
+              }}
             >
               <img
                 src={isMuted ? "/images/soundoff.png" : "/images/soundon.png"}
                 alt={isMuted ? "Sound Off" : "Sound On"}
-                className="h-[63px] w-[63px] md:mb-0 md:w-[100px] md:h-[100px]"
+                className="w-[52px] h-[52px] md:w-[75px] md:h-[75px]"
+                style={{
+                  marginBottom: window.innerWidth >= 768 ? '7.7px' : '4.13px'
+                }}
               />
             </button>
           </div>
