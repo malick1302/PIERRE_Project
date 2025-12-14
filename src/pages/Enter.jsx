@@ -128,7 +128,7 @@ const Enter = () => {
           <div className="absolute inset-0 flex flex-col items-center justify-center z-[100] pointer-events-auto">
             <button
               ref={enterButtonRef}
-              className="px-8 py-4 text-[24px] font-semibold homet hover:bg-black/80 transition-all duration-300 font-HelveticaNeue md:text-[40px]"
+              className="font-HelveticaNeue font-light text-[16px] md:text-[32px]"
               onClick={() => (window.location.href = "/Home")}
             >
               Enter
