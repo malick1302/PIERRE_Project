@@ -6,7 +6,7 @@ export default function Navbar() {
                 onClick={() => window.location.href = "/Home"}
                 className="font-HelveticaNeue text-[15px] md:text-[25px] cursor-pointer"
             >
-                <span className="font-[950] text-[30px] md:text-[50px]">ROAR</span> music & sound.
+                <span className="text-[30px] md:text-[50px]">ROAR</span> music & sound.
             </h1>
 
             {/* Lien Info */}
