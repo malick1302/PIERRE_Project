@@ -51,7 +51,7 @@ const About = () => {
 
                 {/* ✅ Contact EN BAS sur mobile */}
                 <div className="block md:hidden mt-8">
-                    <div className="font-light text-[20px] leading-[26px]">
+                    <div className="font-HelveticaNeue font-light  text-[12px] leading-[26px]">
                         <p className="mb-2">Contact:</p>
                         <p>Pierre Ronin, Aristide Rosier</p>
                         <a 
