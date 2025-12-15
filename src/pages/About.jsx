@@ -26,15 +26,15 @@ const About = () => {
                         />
                         
                         {/* ✅ Description EN DESSOUS de l'image (desktop) */}
-                        <h3 className="font-light text-[20px] leading-[26px] mt-8">
-                            ROAR is a Paris-based studio crafting music and sound design for brands, fashion
+                        <h3 className="font-HelveticaNeue font-light text-[12px] md:text-[20px] leading-[26px] mt-8">
+                           <span className='font-medium'>ROAR</span>  is a Paris-based studio crafting music and sound design for brands, fashion
                             and film. Past clients include Converse, Chiefs, Grand Marnier x Future, AD Council etc.
                         </h3>
                     </div>
 
                     {/* ✅ Contact À DROITE de l'image (desktop uniquement) */}
                     <div className="hidden md:block md:w-[400px] md:flex-shrink-0">
-                        <div className="font-light text-[20px] leading-[26px]">
+                        <div className="font-HelveticaNeue font-light  text-[12px] md:text-[20px] leading-[26px]">
                             <p className="mb-2">Contact:</p>
                             <p>Pierre Ronin, Aristide Rosier</p>
                             <a 
