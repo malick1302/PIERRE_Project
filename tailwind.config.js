@@ -28,11 +28,18 @@ export default {
         'roar-x-mobile': '17.22px',
         'roar-y-mobile': '18px',
         // Desktop/Tablette (md et plus)
-        'roar-x-desktop': '31.91px',
+        'roar-x-desktop': '39.91px',
         'roar-y-desktop': '28px',
         // Logo mute/unmute
         'logo-mb-mobile': '4.13px',
         'logo-mb-desktop': '7.7px',
+          // taille photo info mobile
+          'picture-x-info-mobile' : '362px',
+          'picture-y-info-mobile' : '201px',
+        // Taille photo info
+'picture-x-info-desk': '60vw',     // largeur = 60% du viewport width
+'picture-y-info-desk': 'auto',     // hauteur s'adapte automatiquement
+
       },
     },
   },

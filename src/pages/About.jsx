@@ -4,27 +4,63 @@ import studio3 from "../assets/images/studio3.png";
 
 const About = () => {
     return (
-        <div className="h-screen overflow-hidden scrollbar-hide font-HelveticaNeue">
-            <Navbar />
-            <div className="min-h-screen p-4 md:p-6">
-                
+        <div className="min-h-screen scrollbar-hide font-HelveticaNeue">
+            {/* Navbar avec marges top */}
+            <div className="pt-roar-y-mobile md:pt-roar-y-desktop relative z-[100]">
+                <Navbar />
+            </div>
 
-                <div className="ml-0 flex flex-col md:flex-row md:gap-6 md:ml-0 md:mb-0 md:space-x-6">
-                    {/* Texte */}
-                    <div className="mt-12 w-full md:w-1/3 flex flex-col justify-start md:ml-8 md:text-xl md:mb-0 order-2 md:order-1">
-                        <h3>
-                            Roar is a Paris-based studio crafting custom music and sound design for brands, fashion
-                            and film. Clients include Converse, Chiefs, Grand Marnier x Future, AD Council, etc.
+            {/* Contenu principal avec marges horizontales */}
+            <div className="px-roar-x-mobile md:px-roar-x-desktop">
+                
+                {/* Layout Desktop : Image + Contact côte à côte */}
+                <div className="flex flex-col md:flex-row md:gap-[54px] mt-[41px] md:mt-[17px]">
+                    
+                    {/* Colonne gauche : Image + Description dessous */}
+                    <div className="w-full md:flex-1">
+                        {/* Image */}
+                        <img
+                            src={studio3}
+                            alt="Photo du studio"
+                            className="w-full aspect-[981/544] object-cover"
+                        />
+                        
+                        {/* ✅ Description EN DESSOUS de l'image (desktop) */}
+                        <h3 className="font-light text-[20px] leading-[26px] mt-8">
+                            ROAR is a Paris-based studio crafting music and sound design for brands, fashion
+                            and film. Past clients include Converse, Chiefs, Grand Marnier x Future, AD Council etc.
                         </h3>
-                        <h2 className="mt-8">
-                            Contacts <br />
-                            <a className="hover:text-red-500" href="mailto:test@test.com">test@test.com</a>
-                        </h2>
                     </div>
 
-                    {/* Image */}
-                    <div className="w-full mt-8 md:w-3/5 md:mt-9 order-1 md:order-2 md:pl-12">
-                        <img src={studio3} alt="Photo 1 du studio" />
+                    {/* ✅ Contact À DROITE de l'image (desktop uniquement) */}
+                    <div className="hidden md:block md:w-[400px] md:flex-shrink-0">
+                        <div className="font-light text-[20px] leading-[26px]">
+                            <p className="mb-2">Contact:</p>
+                            <p>Pierre Ronin, Aristide Rosier</p>
+                            <a 
+                                className="hover:underline" 
+                                href="mailto:contact@roar-music.com"
+                            >
+                                contact@roar-music.com
+                            </a>
+                            <p>@Instagram</p>
+                        </div>
+                    </div>
+
+                </div>
+
+                {/* ✅ Contact EN BAS sur mobile */}
+                <div className="block md:hidden mt-8">
+                    <div className="font-light text-[20px] leading-[26px]">
+                        <p className="mb-2">Contact:</p>
+                        <p>Pierre Ronin, Aristide Rosier</p>
+                        <a 
+                            className="hover:underline" 
+                            href="mailto:contact@roar-music.com"
+                        >
+                            contact@roar-music.com
+                        </a>
+                        <p>@Instagram</p>
                     </div>
                 </div>
 

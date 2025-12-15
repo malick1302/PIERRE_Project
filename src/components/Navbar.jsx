@@ -1,7 +1,7 @@
 export default function Navbar() {
     return (
         // ✅ Marges horizontales responsive (pas p-4 !)
-        <div className="flex flex-row justify-between items-center px-roar-x-mobile md:px-roar-x-desktop">
+        <div className="flex flex-row justify-between items-center px-roar-x-mobile md:px-roar-x-desktop ">
             {/* Titre principal */}
             <h1
                 onClick={() => window.location.href = "/Home"}
