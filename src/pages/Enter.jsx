@@ -84,7 +84,8 @@ const Enter = () => {
   return (
     <div className="relative w-screen h-[100dvh] overflow-hidden scrollbar-hide homet">
       {/* ✅ Navbar avec marge top responsive */}
-      <div className="pt-roar-y-mobile md:pt-roar-y-desktop relative z-[100]">
+      
+      <div className="pt-roar-y-mobile md:pt-roar-y-desktop relative z-[300]">
         <Navbar />
       </div>
 

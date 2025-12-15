@@ -55,10 +55,10 @@ export default function VideoList() {
 
           <div className="source-sans-light flex flex-col md:flex-row md:gap-6 md:items-start">
             {/* Player principal - Using iframe like Enter.jsx */}
-            <div className="w-full border border-black md:w-[860px] md:border-none">
+            <div className="w-full md:w-[860px] md:border-none">
               {selectedVideo && selectedVideo.url ? (
                 <div
-                  className="overflow-hidden roar-blue w-full md:w-[860px] relative"
+                  className="overflow-hidden roar-blue w-full md:w-[854px] relative"
                   style={{
                     height: "auto",
                     aspectRatio: "16/9",
@@ -82,8 +82,8 @@ export default function VideoList() {
             </div>
 
             {/* Infos vidéo */}
-            <div className="w-full md:w-[300px] flex flex-col justify-start font-HelveticaNeue mt-4 md:mt-0 md:ml-6">
-              <h3 className="text-2xl md:text-3xl md:mb-2">
+            <div className="w-full md:w-[300px] flex flex-col justify-start font-HelveticaNeue font-light mt-4 md:mt-0 md:ml-6">
+              <h3 className="text-2xl md:text-[20px] md:mb-[43px]">
                 {selectedVideo?.title}
               </h3>
               <p className="text-sm font-HelveticaNeue">
@@ -94,7 +94,7 @@ export default function VideoList() {
 
           {/* Espacement Video → Carousel : Mobile 180px (incluant titre/desc), Desktop 49px */}
           <div style={{ height: "80px" }} className="md:hidden" />
-          <div style={{ height: "49px" }} className="hidden md:block" />
+          <div style={{ height: "35.9px" }} className="hidden md:block" />
 
           {/* Carrousel */}
           <Carousel

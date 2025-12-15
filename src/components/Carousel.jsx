@@ -20,7 +20,7 @@ export default function Carousel({ videos, onSelectVideo, selectedVideo }) {
   const VISIBLE_ITEMS_MOBILE = 3;
 
   const [dimensions, setDimensions] = useState({
-    cardWidth: 100,
+    cardWidth: 140,
     gap: 60,
     sideWidth: 70,
     centerHeight: 154,
@@ -80,7 +80,7 @@ export default function Carousel({ videos, onSelectVideo, selectedVideo }) {
         const figmaGap = 54;
         const scaleRatio = containerWidth / figmaWidth;
         
-        const gapRatio = 0.6;
+        const gapRatio = 0.44;
         const cardWidth = containerWidth / (visibleItems + (visibleItems - 1) * gapRatio);
         const gap = figmaGap * scaleRatio;
         
@@ -107,7 +107,7 @@ export default function Carousel({ videos, onSelectVideo, selectedVideo }) {
 
       const centerIndex = Math.floor(videoList.length / 2);
       const figmaCenterX = 152;
-      const figmaSideX = 36;
+      const figmaSideX = 78;
       const figmaRightX = 273;
 
       const initialPositions = videoList.map((v, i) => {
@@ -205,7 +205,7 @@ export default function Carousel({ videos, onSelectVideo, selectedVideo }) {
       }
 
       if (!isAutoCentering.current && !targetItemRef.current) {
-        speedRef.current += (targetSpeed.current - speedRef.current) * 0.08;
+        speedRef.current += (targetSpeed.current - speedRef.current) * 1.08;
 
         if (Math.abs(speedRef.current) < 0.01) speedRef.current = 0;
 
@@ -362,32 +362,31 @@ export default function Carousel({ videos, onSelectVideo, selectedVideo }) {
 
           return (
             <div
-              key={item.id + "-" + i}
-              className="absolute transition-transform duration-100"
-              style={{
-                left: `${itemX}px`,
-                width: `${itemWidth}px`,
-                bottom: '0px',
-                transform: `scale(${scale})`,
-                transformOrigin: "bottom center",
-                zIndex: Math.round(scale * 100),
-                willChange: "transform, opacity",
-              }}
-            >
-              <img
-                src={item.thumbnail || item.url}
-                alt={item.title || item.alt}
-                onClick={() => handleClick(item)}
-                className="w-full"
-                style={{
-                  height: `${itemHeight}px`,
-                  objectFit: "cover",
-                }}
-              />
+            key={item.id + "-" + i}
+            className="absolute transition-transform duration-100 text-center"
+            style={{
+              left: `${itemX}px`,
+              width: `${itemWidth}px`,
+              bottom: "0px",
+              transform: `scale(${scale})`,
+              transformOrigin: "bottom center",
+              zIndex: Math.round(scale * 100),
+              willChange: "transform, opacity",
+            }}
+          >
+           <img
+  src={item.thumbnail || item.url}
+  alt={item.title || item.alt}
+  onClick={() => handleClick(item)}
+  className="w-full"
+  style={{
+    height: `${CARD_HEIGHT}px`, // Utilise une hauteur fixe pour uniformiser
+    objectFit: "cover", // Ajuste l'image pour remplir le conteneur
+  }}
+/>
               {/* ✅ Marge bottom responsive sur les titres */}
               <div
-                className="text-center font-HelveticaNeue text-base whitespace-nowrap mb-roar-y-mobile md:mb-roar-y-desktop"
-                style={{
+ className="text-center font-HelveticaNeue text-base whitespace-nowrap"                style={{
                   opacity: 1,
                   marginTop: isMobile ? '11px' : '8px',
                   marginLeft: isMobile ? '15px' : '0',
