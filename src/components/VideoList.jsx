@@ -58,7 +58,7 @@ export default function VideoList() {
             <div className="w-full md:w-[860px] md:border-none">
               {selectedVideo && selectedVideo.url ? (
                 <div
-                  className="overflow-hidden roar-blue w-full md:w-[854px] relative"
+                  className="overflow-hidden roar-blue w-full md:w-[850px] relative"
                   style={{
                     height: "auto",
                     aspectRatio: "16/9",
