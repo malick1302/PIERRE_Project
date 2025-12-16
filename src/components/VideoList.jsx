@@ -1,10 +1,14 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import Carousel from "./Carousel";
+import Player from "@vimeo/player";
 
 export default function VideoList() {
   const [videos, setVideos] = useState([]);
   const [selectedVideo, setSelectedVideo] = useState(null);
   const [error, setError] = useState(null);
+  const [isPlaying, setIsPlaying] = useState(false);
+  const videoRef = useRef(null);
+  const playerRef = useRef(null);
 
   useEffect(() => {
     const fetchVideos = async () => {
@@ -41,6 +45,68 @@ export default function VideoList() {
     fetchVideos();
   }, []);
 
+  // Initialize Vimeo Player when video changes
+  useEffect(() => {
+    if (videoRef.current && selectedVideo) {
+      // Destroy previous player if exists
+      if (playerRef.current) {
+        try {
+          playerRef.current.destroy();
+        } catch (err) {
+          console.error("Error destroying player:", err);
+        }
+      }
+
+      // Create new player after a small delay to ensure iframe is loaded
+      setTimeout(() => {
+        if (videoRef.current) {
+          playerRef.current = new Player(videoRef.current);
+          setIsPlaying(false);
+
+          // Listen to play/pause events
+          playerRef.current.on('play', () => setIsPlaying(true));
+          playerRef.current.on('pause', () => setIsPlaying(false));
+          playerRef.current.on('ended', () => setIsPlaying(false));
+        }
+      }, 100);
+    }
+
+    return () => {
+      if (playerRef.current) {
+        try {
+          playerRef.current.destroy();
+        } catch (err) {
+          console.error("Error in cleanup:", err);
+        }
+        playerRef.current = null;
+      }
+    };
+  }, [selectedVideo]);
+
+  const handlePlayPause = async () => {
+    if (!playerRef.current) return;
+
+    try {
+      if (isPlaying) {
+        await playerRef.current.pause();
+      } else {
+        await playerRef.current.play();
+      }
+    } catch (err) {
+      console.error("Error controlling video:", err);
+    }
+  };
+
+  const handleFullscreen = async () => {
+    if (!playerRef.current) return;
+
+    try {
+      await playerRef.current.requestFullscreen();
+    } catch (err) {
+      console.error("Error entering fullscreen:", err);
+    }
+  };
+
   return (
     <div className="min-h-screen px-[15px] md:px-[46px]">
       {error ? (
@@ -54,26 +120,47 @@ export default function VideoList() {
           <div style={{ height: "17px" }} className="hidden md:block" />
 
           <div className="source-sans-light flex flex-col md:flex-row md:gap-6 md:items-start">
-            {/* Player principal - Using iframe like Enter.jsx */}
-            <div className="w-full md:w-[860px] md:border-none">
+            {/* Player principal - Same technique as Enter.jsx */}
+            <div className="w-full md:w-[860px] md:border-none relative">
               {selectedVideo && selectedVideo.url ? (
-                <div
-                  className="overflow-hidden roar-blue w-full md:w-[850px] relative"
-                  style={{
-                    height: "auto",
-                    aspectRatio: "16/9",
-                  }}
-                >
-                  <iframe
-                    key={selectedVideo.id} // Force reload when video changes
-                    src={`${selectedVideo.url}?autoplay=0&loop=0&muted=0`}
-                    className="absolute top-0 left-0 w-full h-full"
-                    frameBorder="0"
-                    allow="autoplay; fullscreen; picture-in-picture"
-                    allowFullScreen
-                    title={selectedVideo.title}
-                  />
-                </div>
+                <>
+                  <div
+                    className="overflow-hidden roar-blue w-full md:w-[850px] relative"
+                    style={{
+                      height: "auto",
+                      aspectRatio: "16/9",
+                    }}
+                  >
+                    <iframe
+                      ref={videoRef}
+                      key={selectedVideo.id} // Force reload when video changes
+                      src={`${selectedVideo.url}?autoplay=0&loop=0&muted=0&controls=0`}
+                      className="absolute top-0 left-0 w-full h-full"
+                      frameBorder="0"
+                      allow="autoplay; fullscreen; picture-in-picture"
+                      allowFullScreen
+                      title={selectedVideo.title}
+                    />
+
+                    {/* Play button in center - only show when not playing */}
+                    {!isPlaying && (
+                      <button
+                        onClick={handlePlayPause}
+                        className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 font-HelveticaNeue font-light text-[32px] md:text-[48px] text-white hover:scale-110 transition-transform z-10"
+                      >
+                        PLAY
+                      </button>
+                    )}
+
+                    {/* Fullscreen button in bottom left */}
+                    <button
+                      onClick={handleFullscreen}
+                      className="absolute bottom-4 right-4 font-HelveticaNeue font-light text-[24px] md:text-[32px] text-white hover:scale-110 transition-transform z-10"
+                    >
+                      [+]
+                    </button>
+                  </div>
+                </>
               ) : (
                 <div className="flex items-center justify-center h-[200px] md:h-[483px] bg-gray-200">
                   <p>Loading video...</p>
