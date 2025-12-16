@@ -82,7 +82,7 @@ export default function VideoList() {
             </div>
 
             {/* Infos vidéo */}
-            <div className="w-full md:w-[300px] flex flex-col justify-start font-HelveticaNeue font-light mt-4 md:mt-0 md:ml-6">
+            <div className="w-full md:w-[300px] flex flex-col justify-start font-HelveticaNeue font-light mt-4 md:mt-0 md:ml-[20.99px] md:mt-[19.41px]">
               <h3 className="text-2xl md:text-[20px] md:mb-[43px]">
                 {selectedVideo?.title}
               </h3>
