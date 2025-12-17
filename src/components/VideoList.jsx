@@ -125,7 +125,7 @@ export default function VideoList() {
               {selectedVideo && selectedVideo.url ? (
                 <>
                   <div
-                    className="overflow-hidden roar-blue w-full md:w-[850px] relative"
+                    className="overflow-hidden roar-blue w-full md:w-[845px] relative"
                     style={{
                       height: "auto",
                       aspectRatio: "16/9",
@@ -169,11 +169,14 @@ export default function VideoList() {
             </div>
 
             {/* Infos vidéo */}
-            <div className="w-full md:w-[300px] flex flex-col justify-start font-HelveticaNeue font-light mt-4 md:mt-0 md:ml-[20.99px] md:mt-[19.41px]">
-              <h3 className="text-2xl md:text-[20px] md:mb-[43px]">
+            <div className="w-full md:w-[300px] flex flex-col justify-start font-HelveticaNeue font-light mt-4 md:mt-0 md:ml-[39.91px] md:mt-[19.81px]">
+              <h3 className="text-2xl md:text-[20px] font-[500] ">
                 {selectedVideo?.title}
               </h3>
-              <p className="text-sm font-HelveticaNeue">
+              <p className="text-sm  font-HelveticaNeue  md:text-[20px] md:mb-[38.62px] md:mt-[19.7px] font-style: italic">
+                {selectedVideo?.soustitre}
+              </p>
+              <p className="text-sm font-HelveticaNeue md:text-[20px] ">
                 {selectedVideo?.description}
               </p>
             </div>

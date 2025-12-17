@@ -365,7 +365,7 @@ export default function Carousel({ videos, onSelectVideo, selectedVideo }) {
   }, [items, dimensions]);
 
   return (
-    <div className="w-full relative overflow-hidden md:mb-0 md:mt-1">
+    <div className="w-full relative overflow-hidden md:mb-0 md:mt-0">
       <div
         ref={containerRef}
         className="relative bg-transparent cursor-pointer"
