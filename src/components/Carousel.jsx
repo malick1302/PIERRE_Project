@@ -17,7 +17,7 @@ export default function Carousel({ videos, onSelectVideo, selectedVideo }) {
 
   // Dimensions ajustées pour 9 images visibles
   const DIMENSIONS_DESKTOP = {
-    center: { width: 120, height: 183 },
+    center: { width: 120, height: 210 },
     adjacent: { width: 110, height: 168 },
     others: { width: 100, height: 157 }
   };
@@ -84,10 +84,48 @@ export default function Carousel({ videos, onSelectVideo, selectedVideo }) {
           sideX: figmaSideX * scaleRatio
         });
       } else {
-        // Desktop : utiliser les dimensions de base pour le calcul
+        // Desktop : calculer pour remplir exactement le conteneur
+        // Largeur totale disponible
+        const availableWidth = containerWidth;
+        
+        // On veut 9 images : 1 center + 2 adjacent + 6 others
+        // Calcul de la largeur totale théorique
+        const theoreticalTotalWidth = 
+          DIMENSIONS_DESKTOP.center.width + 
+          (2 * DIMENSIONS_DESKTOP.adjacent.width) + 
+          (6 * DIMENSIONS_DESKTOP.others.width) + 
+          (8 * GAP_DESKTOP); // 8 gaps entre 9 images
+        
+        // Ratio pour ajuster à la largeur disponible
+        const scaleRatio = availableWidth / theoreticalTotalWidth;
+        
+        // Ajuster toutes les dimensions
+        const adjustedDimensions = {
+          center: {
+            width: DIMENSIONS_DESKTOP.center.width * scaleRatio,
+            height: DIMENSIONS_DESKTOP.center.height
+          },
+          adjacent: {
+            width: DIMENSIONS_DESKTOP.adjacent.width * scaleRatio,
+            height: DIMENSIONS_DESKTOP.adjacent.height
+          },
+          others: {
+            width: DIMENSIONS_DESKTOP.others.width * scaleRatio,
+            height: DIMENSIONS_DESKTOP.others.height
+          }
+        };
+        
+        const adjustedGap = GAP_DESKTOP * scaleRatio;
+        
+        // Stocker les dimensions ajustées
         setDimensions({ 
-          cardWidth: DIMENSIONS_DESKTOP.others.width, 
-          gap: GAP_DESKTOP 
+          cardWidth: adjustedDimensions.others.width, 
+          gap: adjustedGap,
+          centerWidth: adjustedDimensions.center.width,
+          adjacentWidth: adjustedDimensions.adjacent.width,
+          centerHeight: adjustedDimensions.center.height,
+          adjacentHeight: adjustedDimensions.adjacent.height,
+          othersHeight: adjustedDimensions.others.height
         });
       }
     };
@@ -133,12 +171,8 @@ export default function Carousel({ videos, onSelectVideo, selectedVideo }) {
       });
       setItems(initialPositions);
     } else {
-      // Desktop : même logique que l'original
-      const visibleItems = VISIBLE_ITEMS_DESKTOP;
-      const totalVisibleWidth = visibleItems * dimensions.cardWidth + (visibleItems - 1) * dimensions.gap;
-      const rect = containerRef.current?.getBoundingClientRect();
-      const containerWidth = rect ? rect.width : window.innerWidth;
-      const startX = (containerWidth - totalVisibleWidth) / 2;
+      // Desktop : première image commence à x=0
+      const startX = 0; // Pas de marge à gauche
 
       const initialPositions = videoList.map((v, i) => ({
         ...v,
@@ -191,9 +225,10 @@ export default function Carousel({ videos, onSelectVideo, selectedVideo }) {
             isAutoCentering.current = false;
             targetSpeed.current = 0;
 
-            centerPauseTimeout.current = setTimeout(() => {
-              targetItemRef.current = null;
-            }, 500);
+            // Ne pas libérer automatiquement - rester centré
+            // centerPauseTimeout.current = setTimeout(() => {
+            //   targetItemRef.current = null;
+            // }, 500);
 
             return prev;
           }
@@ -256,7 +291,11 @@ export default function Carousel({ videos, onSelectVideo, selectedVideo }) {
   };
 
   const handleMouseLeave = () => {
-    if (!isAutoCentering.current && !targetItemRef.current) targetSpeed.current = 0;
+    // Libérer le verrouillage quand la souris sort
+    if (!isAutoCentering.current) {
+      targetSpeed.current = 0;
+      targetItemRef.current = null;
+    }
   };
 
   const touchX = useRef(null);
@@ -276,7 +315,11 @@ export default function Carousel({ videos, onSelectVideo, selectedVideo }) {
   };
 
   const handleTouchEnd = () => {
-    if (!isAutoCentering.current && !targetItemRef.current) targetSpeed.current = 0;
+    // Libérer le verrouillage à la fin du touch
+    if (!isAutoCentering.current) {
+      targetSpeed.current = 0;
+      targetItemRef.current = null;
+    }
     touchX.current = null;
     lastTouchX.current = null;
   };
@@ -284,8 +327,10 @@ export default function Carousel({ videos, onSelectVideo, selectedVideo }) {
   const handleClick = (item) => {
     if (!containerRef.current || items.length === 0) return;
 
+    // Annuler toute action en cours
     if (centerPauseTimeout.current) clearTimeout(centerPauseTimeout.current);
 
+    // Libérer la cible précédente si on clique sur une nouvelle image
     targetItemRef.current = item;
     isAutoCentering.current = true;
 
@@ -360,25 +405,29 @@ export default function Carousel({ videos, onSelectVideo, selectedVideo }) {
             
             const zoneWidth = dimensions.cardWidth + dimensions.gap;
             
+            // Utiliser les dimensions ajustées stockées
+            const centerWidth = dimensions.centerWidth || DIMENSIONS_DESKTOP.center.width;
+            const centerHeight = dimensions.centerHeight || DIMENSIONS_DESKTOP.center.height;
+            const adjacentWidth = dimensions.adjacentWidth || DIMENSIONS_DESKTOP.adjacent.width;
+            const adjacentHeight = dimensions.adjacentHeight || DIMENSIONS_DESKTOP.adjacent.height;
+            const othersWidth = dimensions.cardWidth;
+            const othersHeight = dimensions.othersHeight || DIMENSIONS_DESKTOP.others.height;
+            
             // Smooth transition entre les 3 tailles
             if (distance < zoneWidth * 0.5) {
               // Zone centrale
               const progress = distance / (zoneWidth * 0.5);
-              itemWidth = DIMENSIONS_DESKTOP.center.width - 
-                (DIMENSIONS_DESKTOP.center.width - DIMENSIONS_DESKTOP.adjacent.width) * progress;
-              itemHeight = DIMENSIONS_DESKTOP.center.height - 
-                (DIMENSIONS_DESKTOP.center.height - DIMENSIONS_DESKTOP.adjacent.height) * progress;
+              itemWidth = centerWidth - (centerWidth - adjacentWidth) * progress;
+              itemHeight = centerHeight - (centerHeight - adjacentHeight) * progress;
             } else if (distance < zoneWidth * 1.5) {
               // Zone adjacente
               const progress = (distance - zoneWidth * 0.5) / zoneWidth;
-              itemWidth = DIMENSIONS_DESKTOP.adjacent.width - 
-                (DIMENSIONS_DESKTOP.adjacent.width - DIMENSIONS_DESKTOP.others.width) * progress;
-              itemHeight = DIMENSIONS_DESKTOP.adjacent.height - 
-                (DIMENSIONS_DESKTOP.adjacent.height - DIMENSIONS_DESKTOP.others.height) * progress;
+              itemWidth = adjacentWidth - (adjacentWidth - othersWidth) * progress;
+              itemHeight = adjacentHeight - (adjacentHeight - othersHeight) * progress;
             } else {
               // Zone éloignée - tous identiques
-              itemWidth = DIMENSIONS_DESKTOP.others.width;
-              itemHeight = DIMENSIONS_DESKTOP.others.height;
+              itemWidth = othersWidth;
+              itemHeight = othersHeight;
             }
           }
 

@@ -108,7 +108,7 @@ export default function VideoList() {
   };
 
   return (
-    <div className="min-h-screen px-[15px] md:px-[46px]">
+    <div className="min-h-screen">
       {error ? (
         <div className="text-red-500 text-center">
           <p>{error}</p>
@@ -119,7 +119,7 @@ export default function VideoList() {
           <div style={{ height: "41px" }} className="md:hidden" />
           <div style={{ height: "17px" }} className="hidden md:block" />
 
-          <div className="source-sans-light flex flex-col md:flex-row md:gap-6 md:items-start">
+          <div className="source-sans-light flex flex-col md:flex-row md:gap-6 md:items-start px-[15px] md:px-[46px]">
             {/* Player principal - Same technique as Enter.jsx */}
             <div className="w-full md:w-[860px] md:border-none relative">
               {selectedVideo && selectedVideo.url ? (
@@ -183,12 +183,14 @@ export default function VideoList() {
           <div style={{ height: "80px" }} className="md:hidden" />
           <div style={{ height: "35.9px" }} className="hidden md:block" />
 
-          {/* Carrousel */}
-          <Carousel
-            videos={videos}
-            onSelectVideo={setSelectedVideo}
-            selectedVideo={selectedVideo}
-          />
+          {/* Carrousel - Avec les mêmes marges que VideoList */}
+          <div className="px-[15px] md:px-[46px]">
+            <Carousel
+              videos={videos}
+              onSelectVideo={setSelectedVideo}
+              selectedVideo={selectedVideo}
+            />
+          </div>
         </>
       )}
     </div>
