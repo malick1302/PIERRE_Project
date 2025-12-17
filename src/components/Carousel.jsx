@@ -18,8 +18,8 @@ export default function Carousel({ videos, onSelectVideo, selectedVideo }) {
   // Dimensions ajustées pour 9 images visibles
   const DIMENSIONS_DESKTOP = {
     center: { width: 120, height: 210 },
-    adjacent: { width: 110, height: 168 },
-    others: { width: 100, height: 157 }
+    adjacent: { width: 110, height: 200 },
+    others: { width: 100, height: 180 }
   };
   const GAP_DESKTOP = 70;
   const TITLE_FONT_SIZE = 16;
@@ -274,7 +274,13 @@ export default function Carousel({ videos, onSelectVideo, selectedVideo }) {
   }, [videos, items.length, dimensions, isMobile]);
 
   const handleMouseMove = (e) => {
-    if (isAutoCentering.current || targetItemRef.current) return;
+    // Libérer le verrouillage dès qu'on bouge la souris (sauf pendant l'auto-centrage)
+    if (!isAutoCentering.current && targetItemRef.current) {
+      targetItemRef.current = null;
+    }
+    
+    if (isAutoCentering.current) return; // Bloquer seulement pendant l'animation de centrage
+    
     const rect = containerRef.current.getBoundingClientRect();
     const center = rect.width / 2;
     const distance = e.clientX - rect.left - center;
@@ -291,35 +297,36 @@ export default function Carousel({ videos, onSelectVideo, selectedVideo }) {
   };
 
   const handleMouseLeave = () => {
-    // Libérer le verrouillage quand la souris sort
-    if (!isAutoCentering.current) {
-      targetSpeed.current = 0;
-      targetItemRef.current = null;
-    }
+    // Réinitialiser la vitesse quand la souris sort
+    targetSpeed.current = 0;
   };
 
   const touchX = useRef(null);
   const lastTouchX = useRef(null);
 
   const handleTouchStart = (e) => {
-    if (isAutoCentering.current || targetItemRef.current) return;
+    // Libérer le verrouillage dès qu'on touche (sauf pendant l'auto-centrage)
+    if (!isAutoCentering.current && targetItemRef.current) {
+      targetItemRef.current = null;
+    }
+    
+    if (isAutoCentering.current) return; // Bloquer seulement pendant l'animation de centrage
+    
     touchX.current = e.touches[0].clientX;
     lastTouchX.current = e.touches[0].clientX;
   };
 
   const handleTouchMove = (e) => {
-    if (isAutoCentering.current || targetItemRef.current) return;
+    if (isAutoCentering.current) return; // Bloquer seulement pendant l'animation de centrage
+    
     const delta = e.touches[0].clientX - lastTouchX.current;
     targetSpeed.current = -delta * 1.2;
     lastTouchX.current = e.touches[0].clientX;
   };
 
   const handleTouchEnd = () => {
-    // Libérer le verrouillage à la fin du touch
-    if (!isAutoCentering.current) {
-      targetSpeed.current = 0;
-      targetItemRef.current = null;
-    }
+    // Réinitialiser la vitesse à la fin du touch
+    targetSpeed.current = 0;
     touchX.current = null;
     lastTouchX.current = null;
   };
@@ -358,7 +365,7 @@ export default function Carousel({ videos, onSelectVideo, selectedVideo }) {
   }, [items, dimensions]);
 
   return (
-    <div className="w-full relative overflow-hidden md:mb-3 md:mt-1">
+    <div className="w-full relative overflow-hidden md:mb-0 md:mt-1">
       <div
         ref={containerRef}
         className="relative bg-transparent cursor-pointer"
