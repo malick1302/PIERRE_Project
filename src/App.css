@@ -1,8 +1,26 @@
 @import url('https://fonts.googleapis.com/css2?family=Baumans&family=Kode+Mono:wght@400..700&family=Orbitron:wght@400..900&family=Roboto:ital,wght@0,100..900;1,100..900&family=Source+Sans+3:ital,wght@0,200..900;1,200..900&display=swap');
 
 @font-face {
+  font-family: 'HelveticaNeue';
+  src: url('/public/font/HelveticaNeue/helveticaNeueRegular.ttf');
+  font-weight: 400;
+  font-style: normal;
+}
+
+
+/* @font-face {
+  font-family: 'Helvetica';
+  src: url('/public/font/Helvetica_Neue/HelveticaNeue-Roman.otf');
+  font-weight: 400;
+  font-style: normal;
+} */
+
+@font-face {
   font-family: 'Helvetica';
   src: url('/public/font/helvetica-lt-narrow/helvn.ttf');
+  font-weight: 200;
+  font-style: normal;
+
 }
 
 /* ✅ HelveticaNeue Light (300) */
@@ -17,7 +35,7 @@
 @font-face {
   font-family: 'HelveticaNeue';
   src: url('../public/font/HelveticaNeue/HelveticaNeueLTStd-ThCn.otf');
-  font-weight: 400;
+  font-weight: 600;
   font-style: normal;
 }
 
@@ -25,7 +43,7 @@
 @font-face {
   font-family: 'HelveticaNeue';
   src: url('../public/font/HelveticaNeue/HelveticaNeueLTStd-Md.otf');
-  font-weight: 500;
+  font-weight: 400;
   font-style: normal;
 }
 

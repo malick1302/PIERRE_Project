@@ -82,7 +82,7 @@ const Enter = () => {
   };
 
   return (
-    <div className="relative w-screen h-[100dvh] overflow-hidden scrollbar-hide homet">
+    <div className="relative w-screen h-[100dvh] overflow-hidden scrollbar-hide homet greyh">
       {/* ✅ Navbar avec marge top responsive */}
       
       <div className="pt-roar-y-mobile md:pt-roar-y-desktop relative z-[300]">
@@ -109,7 +109,7 @@ const Enter = () => {
       {loading && (
         <div
           ref={overlayRef}
-          className="absolute inset-0 flex flex-col items-center justify-center bg-black z-50"
+          className="absolute inset-0 flex flex-col items-center justify-center bg-black z-50 "
         >
           <div className="flex space-x-2">
             {[...Array(5)].map((_, i) => (
@@ -129,7 +129,7 @@ const Enter = () => {
           <div className="absolute inset-0 flex flex-col items-center justify-center z-[100] pointer-events-auto">
             <button
               ref={enterButtonRef}
-              className="font-HelveticaNeue font-light text-[16px] md:text-[32px]"
+              className="font-Helvetica_Neue font-[400] text-[16px] md:text-[38px] greyh"
               onClick={() => (window.location.href = "/Home")}
             >
               Enter

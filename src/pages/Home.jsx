@@ -5,16 +5,13 @@ import Navbar from '../components/Navbar';
 
 const Home = () => {
     return (
-        <div className="h-screen overflow-hidden scrollbar-hide">
-           <div className="pt-roar-y-mobile md:pt-roar-y-desktop relative z-[100]">
+        <div className="w-full overflow-y-auto scrollbar-hide">
+           <div className="pt-roar-y-mobile md:pt-roar-y-desktop relative z-[100] md:pt-[18px]">
                    <Navbar />
                  </div>
-            < VideoList />
-
+            <VideoList />
         </div>
-
     );
-
 };
 
 export default Home;

@@ -4,7 +4,7 @@ import studio3 from "../assets/images/studio3.png";
 
 const About = () => {
     return (
-        <div className="min-h-screen scrollbar-hide font-HelveticaNeue">
+        <div className="min-h-screen scrollbar-hide font-HelveticaNeue ">
             {/* Navbar avec marges top */}
             <div className="pt-roar-y-mobile md:pt-roar-y-desktop relative z-[100]">
                 <Navbar />
@@ -26,7 +26,7 @@ const About = () => {
                         />
                         
                         {/* ✅ Description EN DESSOUS de l'image (desktop) */}
-                        <h3 className="font-HelveticaNeue font-light text-[12px] md:text-[20px] leading-[26px] mt-8">
+                        <h3 className="font-HelveticaNeue font-light text-[12px] md:text-[20px] leading-[26px] mt-8 ">
                            <span className='font-medium'>ROAR</span>  is a Paris-based studio crafting music and sound design for brands, fashion
                             and film. Past clients include Converse, Chiefs, Grand Marnier x Future, AD Council etc.
                         </h3>
@@ -34,7 +34,7 @@ const About = () => {
 
                     {/* ✅ Contact À DROITE de l'image (desktop uniquement) */}
                     <div className="hidden md:block md:w-[400px] md:flex-shrink-0">
-                        <div className="font-HelveticaNeue font-light  text-[12px] md:text-[20px] leading-[26px]">
+                        <div className="font-HelveticaNeue text-[12px] md:text-[20px] leading-[26px] font-[400] ">
                             <p className="mb-2">Contact:</p>
                             <p>Pierre Ronin, Aristide Rosier</p>
                             <a 
@@ -51,7 +51,7 @@ const About = () => {
 
                 {/* ✅ Contact EN BAS sur mobile */}
                 <div className="block md:hidden mt-8">
-                    <div className="font-HelveticaNeue font-light  text-[12px] leading-[26px]">
+                    <div className="font-HelveticaNeue text-[12px] leading-[26px]">
                         <p className="mb-2">Contact:</p>
                         <p>Pierre Ronin, Aristide Rosier</p>
                         <a 

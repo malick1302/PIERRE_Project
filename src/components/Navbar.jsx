@@ -5,13 +5,14 @@ export default function Navbar() {
             {/* Titre principal */}
             <h1
                 onClick={() => window.location.href = "/Home"}
-                className="font-HelveticaNeue font-light text-[16px] md:text-[32px] cursor-pointer"
+                className="font-HelveticaNeue font-[300] text-[16px] md:text-[32px] cursor-pointer"
             >
                 {/* ✅ ROAR en Medium */}
                 <span className="text-[30px] md:text-[50px] font-medium">ROAR</span> 
                 {" "}music{" "}
-                <span className="text-[12px] md:text-[24px]">&</span>
+                <span className="text-[12px] md:text-[24px] ">&</span>
                 {" "}sound.
+
             </h1>
 
             {/* ✅ Info en Medium (pas de font-[950]) */}

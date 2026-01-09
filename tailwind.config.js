@@ -10,6 +10,7 @@ export default {
         'roar-blue': '#3137FD',
         'roar-light': 'F8F8F8',
         'greyh': 'D1D1D1',
+        'backGrey' : 'F6F6F6',
         'roar-dark': '#3137FD',
         'roar-accent': '#7C7C7C',
         'roar-bg': '#E0E0E0',

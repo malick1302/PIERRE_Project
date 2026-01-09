@@ -1,6 +1,6 @@
 import { useRef, useEffect, useState } from "react";
 
-export default function Carousel({ videos, onSelectVideo, selectedVideo }) {
+export default function Carousel({ videos, onSelectVideo, selectedVideo, carouselBottomMargin = 60 }) {
   const containerRef = useRef(null);
   const animationRef = useRef();
   const [items, setItems] = useState([]);
@@ -15,7 +15,7 @@ export default function Carousel({ videos, onSelectVideo, selectedVideo }) {
 
   const videoList = videos || [];
 
-  // Dimensions ajustées pour 9 images visibles
+  // Dimensions ajustées pour 9 images visibles (en px, converties en rem dans les styles)
   const DIMENSIONS_DESKTOP = {
     center: { width: 120, height: 210 },
     adjacent: { width: 110, height: 200 },
@@ -25,7 +25,11 @@ export default function Carousel({ videos, onSelectVideo, selectedVideo }) {
   const TITLE_FONT_SIZE = 16;
 
   const VISIBLE_ITEMS_DESKTOP = 9;
+  const VISIBLE_ITEMS_TABLET = 5;
   const VISIBLE_ITEMS_MOBILE = 3;
+
+  // Helper pour convertir des px en rem dans les styles inline
+  const pxToRem = (px) => px / 16;
 
   const [dimensions, setDimensions] = useState({
     cardWidth: 100,
@@ -37,6 +41,7 @@ export default function Carousel({ videos, onSelectVideo, selectedVideo }) {
     sideX: 46
   });
   const [isMobile, setIsMobile] = useState(false);
+  const [isTablet, setIsTablet] = useState(false);
 
   useEffect(() => {
     const calculateDimensions = () => {
@@ -54,8 +59,10 @@ export default function Carousel({ videos, onSelectVideo, selectedVideo }) {
       }
 
       const mobile = containerWidth < 768;
+      const tablet = containerWidth >= 768 && containerWidth < 1024;
       setIsMobile(mobile);
-      const visibleItems = mobile ? VISIBLE_ITEMS_MOBILE : VISIBLE_ITEMS_DESKTOP;
+      setIsTablet(tablet);
+      const visibleItems = mobile ? VISIBLE_ITEMS_MOBILE : (tablet ? VISIBLE_ITEMS_TABLET : VISIBLE_ITEMS_DESKTOP);
 
       if (mobile) {
         const figmaWidth = 390;
@@ -83,22 +90,57 @@ export default function Carousel({ videos, onSelectVideo, selectedVideo }) {
           centerX: figmaCenterX * scaleRatio,
           sideX: figmaSideX * scaleRatio
         });
+      } else if (tablet) {
+        // Tablet : calculer pour 5 images : 1 center (3ème) + 4 others
+        const availableWidth = containerWidth;
+
+        // Calcul de la largeur totale théorique pour 5 images
+        const theoreticalTotalWidth =
+          DIMENSIONS_DESKTOP.center.width +
+          (4 * DIMENSIONS_DESKTOP.others.width) +
+          (4 * GAP_DESKTOP); // 4 gaps entre 5 images
+
+        // Ratio pour ajuster à la largeur disponible
+        const scaleRatio = availableWidth / theoreticalTotalWidth;
+
+        // Ajuster toutes les dimensions
+        const adjustedDimensions = {
+          center: {
+            width: DIMENSIONS_DESKTOP.center.width * scaleRatio,
+            height: DIMENSIONS_DESKTOP.center.height * scaleRatio
+          },
+          others: {
+            width: DIMENSIONS_DESKTOP.others.width * scaleRatio,
+            height: DIMENSIONS_DESKTOP.others.height * scaleRatio
+          }
+        };
+
+        const adjustedGap = GAP_DESKTOP * scaleRatio;
+
+        // Stocker les dimensions ajustées
+        setDimensions({
+          cardWidth: adjustedDimensions.others.width,
+          gap: adjustedGap,
+          centerWidth: adjustedDimensions.center.width,
+          centerHeight: adjustedDimensions.center.height,
+          othersHeight: adjustedDimensions.others.height
+        });
       } else {
         // Desktop : calculer pour remplir exactement le conteneur
         // Largeur totale disponible
         const availableWidth = containerWidth;
-        
+
         // On veut 9 images : 1 center + 2 adjacent + 6 others
         // Calcul de la largeur totale théorique
-        const theoreticalTotalWidth = 
-          DIMENSIONS_DESKTOP.center.width + 
-          (2 * DIMENSIONS_DESKTOP.adjacent.width) + 
-          (6 * DIMENSIONS_DESKTOP.others.width) + 
+        const theoreticalTotalWidth =
+          DIMENSIONS_DESKTOP.center.width +
+          (2 * DIMENSIONS_DESKTOP.adjacent.width) +
+          (6 * DIMENSIONS_DESKTOP.others.width) +
           (8 * GAP_DESKTOP); // 8 gaps entre 9 images
-        
+
         // Ratio pour ajuster à la largeur disponible
         const scaleRatio = availableWidth / theoreticalTotalWidth;
-        
+
         // Ajuster toutes les dimensions
         const adjustedDimensions = {
           center: {
@@ -114,12 +156,12 @@ export default function Carousel({ videos, onSelectVideo, selectedVideo }) {
             height: DIMENSIONS_DESKTOP.others.height
           }
         };
-        
+
         const adjustedGap = GAP_DESKTOP * scaleRatio;
-        
+
         // Stocker les dimensions ajustées
-        setDimensions({ 
-          cardWidth: adjustedDimensions.others.width, 
+        setDimensions({
+          cardWidth: adjustedDimensions.others.width,
           gap: adjustedGap,
           centerWidth: adjustedDimensions.center.width,
           adjacentWidth: adjustedDimensions.adjacent.width,
@@ -170,20 +212,54 @@ export default function Carousel({ videos, onSelectVideo, selectedVideo }) {
         return { ...v, x };
       });
       setItems(initialPositions);
-    } else {
-      // Desktop : première image commence à x=0
-      const startX = 0; // Pas de marge à gauche
+    } else if (isTablet) {
+      // Tablet : 5 images, la 3ème (index 2) au centre
+      const rect = containerRef.current?.getBoundingClientRect();
+      const containerWidth = rect ? rect.width : window.innerWidth;
+      const centerIndex = 2; // 3ème image (index 2)
+      const centerWidth = dimensions.centerWidth || dimensions.cardWidth;
+      const othersWidth = dimensions.cardWidth;
+      const gap = dimensions.gap;
 
-      const initialPositions = videoList.map((v, i) => ({
-        ...v,
-        x: startX + i * (dimensions.cardWidth + dimensions.gap),
-      }));
+      // Calculer la position de départ pour centrer les 5 images
+      // 2 images à gauche + 1 image centrale + 2 images à droite
+      const totalWidth = (2 * othersWidth) + centerWidth + (2 * othersWidth) + (4 * gap);
+      const startX = (containerWidth - totalWidth) / 2;
+
+      const initialPositions = videoList.map((v, i) => {
+        let x;
+
+        if (i < centerIndex) {
+          // Images à gauche du centre (index 0 et 1)
+          x = startX + i * (othersWidth + gap);
+        } else if (i === centerIndex) {
+          // Image centrale (index 2) - positionnée après les 2 images de gauche
+          x = startX + (2 * (othersWidth + gap));
+        } else {
+          // Images à droite du centre (index 3 et 4)
+          x = startX + (2 * (othersWidth + gap)) + centerWidth + gap + ((i - centerIndex - 1) * (othersWidth + gap));
+        }
+
+        return { ...v, x };
+      });
+      setItems(initialPositions);
+    } else {
+      // Desktop : positions simples avec gap fixe
+      const startX = 0;
+      const gap = dimensions.gap;
+
+      const initialPositions = videoList.map((v, i) => {
+        const x = startX + i * (dimensions.cardWidth + gap);
+        return { ...v, x };
+      });
       setItems(initialPositions);
     }
-  }, [videos, dimensions, isMobile]);
+  }, [videos, dimensions, isMobile, isTablet]);
 
   useEffect(() => {
     if (dimensions.cardWidth === 0) return;
+
+    // Calculer totalWidth
     const totalWidth = (dimensions.cardWidth + dimensions.gap) * videoList.length;
 
     const loop = () => {
@@ -253,10 +329,8 @@ export default function Carousel({ videos, onSelectVideo, selectedVideo }) {
           setItems((prev) =>
             prev.map((item) => {
               let newX = item.x - speedRef.current;
-
               if (newX < -dimensions.cardWidth - dimensions.gap) newX += totalWidth;
               if (newX > totalWidth - dimensions.cardWidth) newX -= totalWidth;
-
               return { ...item, x: newX };
             })
           );
@@ -271,16 +345,16 @@ export default function Carousel({ videos, onSelectVideo, selectedVideo }) {
       cancelAnimationFrame(animationRef.current);
       if (centerPauseTimeout.current) clearTimeout(centerPauseTimeout.current);
     };
-  }, [videos, items.length, dimensions, isMobile]);
+  }, [videos, items.length, dimensions, isMobile, isTablet]);
 
   const handleMouseMove = (e) => {
     // Libérer le verrouillage dès qu'on bouge la souris (sauf pendant l'auto-centrage)
     if (!isAutoCentering.current && targetItemRef.current) {
       targetItemRef.current = null;
     }
-    
+
     if (isAutoCentering.current) return; // Bloquer seulement pendant l'animation de centrage
-    
+
     const rect = containerRef.current.getBoundingClientRect();
     const center = rect.width / 2;
     const distance = e.clientX - rect.left - center;
@@ -309,16 +383,16 @@ export default function Carousel({ videos, onSelectVideo, selectedVideo }) {
     if (!isAutoCentering.current && targetItemRef.current) {
       targetItemRef.current = null;
     }
-    
+
     if (isAutoCentering.current) return; // Bloquer seulement pendant l'animation de centrage
-    
+
     touchX.current = e.touches[0].clientX;
     lastTouchX.current = e.touches[0].clientX;
   };
 
   const handleTouchMove = (e) => {
     if (isAutoCentering.current) return; // Bloquer seulement pendant l'animation de centrage
-    
+
     const delta = e.touches[0].clientX - lastTouchX.current;
     targetSpeed.current = -delta * 1.2;
     lastTouchX.current = e.touches[0].clientX;
@@ -371,8 +445,8 @@ export default function Carousel({ videos, onSelectVideo, selectedVideo }) {
         className="relative bg-transparent cursor-pointer"
         style={{
           height: isMobile
-            ? `${(dimensions.centerHeight || 154) + 50}px`
-            : `${DIMENSIONS_DESKTOP.center.height + 50}px`
+            ? `${(dimensions.centerHeight || 154) + 60}px`
+            : `${DIMENSIONS_DESKTOP.center.height + 8 + 20}px` // Image (210px) + margin-top (8px) + titre (~20px) - la marge bottom est gérée par le parent
         }}
         onMouseMove={handleMouseMove}
         onMouseLeave={handleMouseLeave}
@@ -388,30 +462,44 @@ export default function Carousel({ videos, onSelectVideo, selectedVideo }) {
 
           if (isMobile) {
             const containerWidth = rect ? rect.width : window.innerWidth;
-            
+
             const centerWidth = dimensions.cardWidth;
             const centerHeight = dimensions.centerHeight || 154;
             const sideWidth = dimensions.sideWidth;
             const sideHeight = dimensions.sideHeight || 129;
-            
+
             itemX = item.x;
             const itemCenter = item.x + centerWidth / 2;
             const distance = Math.abs(itemCenter - center);
-            
+
             const maxDistance = (centerWidth + dimensions.gap) * 2;
             const scaleProgress = 1 - (distance / maxDistance);
             const clampedProgress = Math.max(0, Math.min(1, scaleProgress));
-            
+
             itemWidth = sideWidth + (centerWidth - sideWidth) * clampedProgress;
             itemHeight = sideHeight + (centerHeight - sideHeight) * clampedProgress;
+          } else if (isTablet) {
+            // Tablet : la 3ème image (index 2) est plus grande
+            itemX = item.x;
+            const centerIndex = 2;
+
+            if (i === centerIndex) {
+              // Image centrale (3ème) : grande taille
+              itemWidth = dimensions.centerWidth || dimensions.cardWidth;
+              itemHeight = dimensions.centerHeight || DIMENSIONS_DESKTOP.center.height;
+            } else {
+              // Autres images : petite taille
+              itemWidth = dimensions.cardWidth;
+              itemHeight = dimensions.othersHeight || DIMENSIONS_DESKTOP.others.height;
+            }
           } else {
             // Desktop : calcul des dimensions selon la distance du centre
             itemX = item.x;
             const itemCenter = item.x + dimensions.cardWidth / 2;
             const distance = Math.abs(itemCenter - center);
-            
+
             const zoneWidth = dimensions.cardWidth + dimensions.gap;
-            
+
             // Utiliser les dimensions ajustées stockées
             const centerWidth = dimensions.centerWidth || DIMENSIONS_DESKTOP.center.width;
             const centerHeight = dimensions.centerHeight || DIMENSIONS_DESKTOP.center.height;
@@ -419,7 +507,7 @@ export default function Carousel({ videos, onSelectVideo, selectedVideo }) {
             const adjacentHeight = dimensions.adjacentHeight || DIMENSIONS_DESKTOP.adjacent.height;
             const othersWidth = dimensions.cardWidth;
             const othersHeight = dimensions.othersHeight || DIMENSIONS_DESKTOP.others.height;
-            
+
             // Smooth transition entre les 3 tailles
             if (distance < zoneWidth * 0.5) {
               // Zone centrale
@@ -445,7 +533,7 @@ export default function Carousel({ videos, onSelectVideo, selectedVideo }) {
               style={{
                 left: `${itemX}px`,
                 width: `${itemWidth}px`,
-                bottom: '0px',
+                bottom: "0px",
                 zIndex: 50,
                 willChange: "transform, opacity",
               }}
@@ -461,13 +549,13 @@ export default function Carousel({ videos, onSelectVideo, selectedVideo }) {
                 }}
               />
               <div
-                className="text-center font-HelveticaNeue whitespace-nowrap"
+                className="text-center font-HelveticaNeue font-light whitespace-nowrap  pt-2"
                 style={{
                   opacity: 1,
-                  marginTop: isMobile ? '11px' : '8px',
-                  marginLeft: isMobile ? '15px' : '0',
-                  marginRight: isMobile ? '15px' : '0',
-                  fontSize: isMobile ? '12px' : `${TITLE_FONT_SIZE}px`
+                  marginTop: isMobile ? "11px" : "8px",
+                  marginLeft: isMobile ? "15px" : "0",
+                  marginRight: isMobile ? "15px" : "0",
+                  fontSize: isMobile ? "12px" : `${TITLE_FONT_SIZE}px`,
                 }}
               >
                 {item.title || item.alt || ""}
